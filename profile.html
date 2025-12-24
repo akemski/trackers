@@ -113,9 +113,22 @@
       background: var(--panel);
       border: 3px solid var(--line);
       padding: 20px;
+      text-align: center;
+    }
+
+    .profile-name .display-name {
       font-size: 24px;
       font-weight: 700;
-      text-align: center;
+      display: block;
+    }
+
+    .profile-name .ingame-name {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--muted);
+      display: block;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
     }
 
     .profile-status {
@@ -554,7 +567,18 @@
 
     // Display User Data
     function displayUserData() {
-      profileName.textContent = currentUser.username || 'Unbekannt';
+      // Name + Ingame Name anzeigen
+      const displayName = currentUser.displayName || currentUser.username || 'Unbekannt';
+      const ingameName = currentUser.ingameName || '';
+      
+      if (ingameName) {
+        profileName.innerHTML = `
+          <span class="display-name">${displayName}</span>
+          <span class="ingame-name">${ingameName}</span>
+        `;
+      } else {
+        profileName.innerHTML = `<span class="display-name">${displayName}</span>`;
+      }
       
       // Status
       const status = currentUser.status || 'Online';
@@ -627,16 +651,12 @@
       }
 
       try {
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          profileImage.innerHTML = `<img src="${e.target.result}" alt="Profilbild">`;
-        };
-        reader.readAsDataURL(file);
+        // Show loading state
+        profileImage.innerHTML = '<span>Bild wird hochgeladen...</span>';
 
         // Upload to Firebase Storage
         const storageRef = storage.ref(`profile-images/${username}-${Date.now()}`);
-        await storageRef.put(file);
+        const uploadTask = await storageRef.put(file);
         const downloadURL = await storageRef.getDownloadURL();
 
         // Update Firestore
@@ -644,12 +664,20 @@
           profileImage: downloadURL
         });
 
+        // Update local data
         currentUser.profileImage = downloadURL;
+        originalData.profileImage = downloadURL;
+
+        // Show the uploaded image
+        profileImage.innerHTML = `<img src="${downloadURL}" alt="Profilbild">`;
+        
         alert('Profilbild erfolgreich hochgeladen!');
 
       } catch (error) {
         console.error('Upload Fehler:', error);
-        alert('Fehler beim Hochladen des Bildes!');
+        alert('Fehler beim Hochladen des Bildes: ' + error.message);
+        // Restore previous image on error
+        displayUserData();
       }
     });
 
