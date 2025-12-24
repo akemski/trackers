@@ -21,7 +21,7 @@
 
       --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
       --shadow: 0 14px 40px rgba(0,0,0,.45);
-      --radius: 16px;
+      --radius: 0px; /* Ecken schärfer */
       --border-color: rgba(37,37,55,.7);
       --border-hover: rgba(209,42,61,.45);
     }
@@ -48,25 +48,25 @@
       color: #ccc;
     }
 
-    /* Glitch Effect for Logo */
+    /* Neues, weniger intensives Retro-Glitch für die Überschrift */
     h1{
       font-size: 36px;
       font-family: 'Courier New', Courier, monospace;
       text-transform: uppercase;
-      text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b;
-      animation: glitch 1s infinite linear;
+      animation: glitchEffect 1.2s infinite;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4);
     }
 
-    @keyframes glitch {
-      0% { text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b; }
-      50% { text-shadow: -5px -5px 5px #ff3b3b, 5px 5px 10px #c53f3f; }
-      100% { text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b; }
+    @keyframes glitchEffect {
+      0% { text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4); }
+      50% { text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7), -2px -2px 5px rgba(255, 59, 59, 0.3); }
+      100% { text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4); }
     }
 
     .card{
       background: linear-gradient(180deg, rgba(16,16,24,.95), rgba(12,12,16,.95));
       border: 1px solid rgba(43,43,68,.9);
-      border-radius: var(--radius);
+      border-radius: var(--radius); /* Ecken schärfer */
       box-shadow: var(--shadow);
       padding: 22px;
       position: relative;
