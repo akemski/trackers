@@ -6,18 +6,18 @@
   <title>Dark Trackers • Mein Profil</title>
 
   <style>
-    :root{
-      --bg0:#050505;
-      --bg1:#0b0b10;
-      --panel:#101018;
-      --panel2:#0e0e16;
-      --line:#242436;
-      --line2:#2b2b44;
-      --text:#ececf4;
-      --muted:#b8b8d2;
+    :root {
+      --bg0: #050505;
+      --bg1: #0b0b10;
+      --panel: #101018;
+      --panel2: #0e0e16;
+      --line: #242436;
+      --line2: #2b2b44;
+      --text: #ececf4;
+      --muted: #b8b8d2;
 
-      --red:#c53f3f;
-      --red2:#ff3b3b;
+      --red: #c53f3f;
+      --red2: #ff3b3b;
 
       --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
       --shadow: 0 14px 40px rgba(0,0,0,.45);
@@ -26,37 +26,41 @@
       --border-hover: rgba(209,42,61,.45);
     }
 
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
       font-family: 'Courier New', Courier, monospace;
-      color:var(--text);
+      color: var(--text);
       background:
         radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
         radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
-      min-height:100vh;
+      min-height: 100vh;
       overflow: hidden;
       font-size: 14px;
     }
 
-    .wrap {
+    .parent {
       display: grid;
       grid-template-columns: 250px 1fr;
-      gap: 20px;
-      max-width: 1040px;
+      grid-template-rows: repeat(6, auto);
+      grid-column-gap: 25px;
+      grid-row-gap: 20px;
+      max-width: 1024px;
       margin: 0 auto;
       padding: 32px 16px;
     }
 
-    /* Links: Profilbild, Name, Status und Bio */
-    .profile-left {
+    /* Profilbereich (links) */
+    .div1 {
+      grid-area: 1 / 1 / 3 / 2;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .profile-left img {
+    .div1 img {
       width: 100%;
       max-width: 250px;
       height: 250px;
@@ -64,39 +68,40 @@
       object-fit: cover;
     }
 
-    .profile-left .name {
+    .div1 .name {
       font-size: 32px;
       font-weight: 700;
-      color: var(--text);
     }
 
-    .profile-left .status, .profile-left .bio {
+    .div1 .status, .div1 .bio {
       background-color: rgba(16, 16, 24, 0.95);
       padding: 16px;
       border-radius: var(--radius);
       border: 1px solid var(--border-color);
     }
 
-    .profile-left .status {
+    .div1 .status {
       font-size: 16px;
       color: var(--muted);
     }
 
-    .profile-left .bio p {
+    .div1 .bio {
       font-size: 16px;
       color: var(--muted);
     }
 
-    /* Rechts: Bereichs-Karten */
-    .profile-right {
+    /* Rechte Seite (Bereichs-Karten) */
+    .div2 {
+      grid-area: 1 / 2 / 6 / 3;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(3, 1fr);
+      grid-column-gap: 20px;
+      grid-row-gap: 20px;
     }
 
     .box {
-      background: linear-gradient(180deg, rgba(14, 14, 22, .92), rgba(10, 10, 16, .92));
-      border: 1px solid rgba(36, 36, 54, .9);
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid rgba(36,36,54,.9);
       border-radius: var(--radius);
       padding: 16px;
       position: relative;
@@ -129,9 +134,23 @@
       background-color: var(--red2);
     }
 
-    /* Responsive Anpassungen */
+    /* Footer */
+    .footer-note {
+      grid-area: 6 / 1 / 7 / 3;
+      color: rgba(184, 184, 210, 0.75);
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      font-weight: 300;
+      text-align: center;
+    }
+
     @media (max-width: 768px) {
-      .wrap {
+      .parent {
+        grid-template-columns: 1fr;
+      }
+
+      .div2 {
         grid-template-columns: 1fr;
       }
     }
@@ -140,12 +159,11 @@
 </head>
 
 <body>
-  <div class="wrap">
-
-    <!-- Links: Profilbild, Name, Status, Bio -->
-    <div class="profile-left">
-      <img src="path/to/placeholder.jpg" alt="Profilbild"> <!-- Platzhalterbild -->
-      <div class="name">Nadira</div> <!-- Beispiel-Name -->
+  <div class="parent">
+    <!-- Profilbereich (links) -->
+    <div class="div1">
+      <img src="path/to/placeholder.jpg" alt="Profilbild"> <!-- Profilbild -->
+      <div class="name">Nadira</div> <!-- Name -->
       <div class="status">Status: Online</div> <!-- Status -->
       <div class="bio">
         <h3>Bio der Person</h3>
@@ -153,8 +171,8 @@
       </div>
     </div>
 
-    <!-- Rechts: Bereichs-Karten (Forum, Member Liste, Dressur, etc.) -->
-    <div class="profile-right">
+    <!-- Rechte Seite (Bereichs-Karten) -->
+    <div class="div2">
       <div class="box">
         <h3>Member Liste</h3>
         <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
@@ -170,7 +188,11 @@
         <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
         <a href="dressur.html" class="btn">Öffnen</a>
       </div>
-      <!-- Weitere Karten hinzufügen -->
+      <div class="box">
+        <h3>Platzhalter</h3>
+        <p>Beschreibung des Bereichs.</p>
+        <a href="#" class="btn">Öffnen</a>
+      </div>
       <div class="box">
         <h3>Platzhalter</h3>
         <p>Beschreibung des Bereichs.</p>
@@ -183,6 +205,10 @@
       </div>
     </div>
 
+    <!-- Footer -->
+    <div class="footer-note">
+      All actions logged • Protocol DT-01 • Compartmentalized access
+    </div>
   </div>
 </body>
 </html>
