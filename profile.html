@@ -42,108 +42,76 @@
     }
 
     .parent {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      grid-template-rows: repeat(6, auto);
-      grid-column-gap: 25px;
-      grid-row-gap: 20px;
-      max-width: 1024px;
-      margin: 0 auto;
-      padding: 32px 16px;
-    }
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Profilbereich + rechte Seite */
+  grid-template-rows: auto 1fr; /* Fixe Höhe für den Header und flexible Höhe für den Inhalt */
+  grid-column-gap: 25px;
+  grid-row-gap: 20px;
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
 
-    /* Profilbereich (links) */
-    .div1 {
-      grid-area: 1 / 1 / 3 / 2;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+.div1 {
+  grid-area: 1 / 1 / 3 / 2; /* Profilbereich */
+}
 
-    .div1 img {
-      width: 100%;
-      max-width: 250px;
-      height: 250px;
-      border-radius: 12px;
-      object-fit: cover;
-    }
+.div2 {
+  grid-area: 1 / 2 / 2 / 3; /* Dark Trackers Überschrift */
+}
 
-    .div1 .name {
-      font-size: 32px;
-      font-weight: 700;
-    }
+.div3 {
+  grid-area: 2 / 2 / 6 / 3; /* Bereiche mit den Boxen für Member Liste, Forum, etc. */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
+  grid-template-rows: repeat(3, auto); /* 3 Reihen */
+  grid-gap: 20px;
+}
 
-    .div1 .status, .div1 .bio {
-      background-color: rgba(16, 16, 24, 0.95);
-      padding: 16px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border-color);
-    }
+.box {
+  background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+  border: 1px solid rgba(36,36,54,.9);
+  border-radius: var(--radius);
+  padding: 16px;
+  position: relative;
+}
 
-    .div1 .status {
-      font-size: 16px;
-      color: var(--muted);
-    }
+.box h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
 
-    .div1 .bio {
-      font-size: 16px;
-      color: var(--muted);
-    }
+.box p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 10px 0;
+}
 
-    /* Rechte Seite (Bereichs-Karten) */
-    .div2 {
-      grid-area: 1 / 2 / 6 / 3;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-column-gap: 20px;
-      grid-row-gap: 20px;
-    }
+.box .btn {
+  display: inline-block;
+  background-color: var(--red);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+}
 
-    .box {
-      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
-      border: 1px solid rgba(36,36,54,.9);
-      border-radius: var(--radius);
-      padding: 16px;
-      position: relative;
-    }
+.box .btn:hover {
+  background-color: var(--red2);
+}
 
-    .box h3 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-    }
-
-    .box p {
-      font-size: 14px;
-      color: var(--muted);
-      margin: 10px 0;
-    }
-
-    .box .btn {
-      display: inline-block;
-      background-color: var(--red);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .box .btn:hover {
-      background-color: var(--red2);
-    }
-
-    /* Footer */
-    .footer-note {
-      grid-area: 6 / 1 / 7 / 3;
-      color: rgba(184, 184, 210, 0.75);
-      font-size: 12px;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      font-weight: 300;
-      text-align: center;
-    }
+.footer-note {
+  grid-area: 6 / 1 / 7 / 3;
+  color: rgba(184, 184, 210, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-weight: 300;
+  text-align: center;
+}
 
     @media (max-width: 768px) {
       .parent {
