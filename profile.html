@@ -482,7 +482,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
   <script>
     // Firebase Config
@@ -498,7 +497,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
     // DOM Elements
     const loadingState = document.getElementById('loadingState');
@@ -644,9 +642,9 @@
         return;
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Bild ist zu groß! Max. 5MB erlaubt.');
+      // Validate file size (max 1MB for Firestore)
+      if (file.size > 1 * 1024 * 1024) {
+        alert('Bild ist zu groß! Max. 1MB erlaubt (für kleinere Bilder bitte online komprimieren).');
         return;
       }
 
@@ -654,29 +652,43 @@
         // Show loading state
         profileImage.innerHTML = '<span>Bild wird hochgeladen...</span>';
 
-        // Upload to Firebase Storage
-        const storageRef = storage.ref(`profile-images/${username}-${Date.now()}`);
-        const uploadTask = await storageRef.put(file);
-        const downloadURL = await storageRef.getDownloadURL();
+        // Convert image to base64
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          try {
+            const base64Image = event.target.result;
 
-        // Update Firestore
-        await db.collection('users').doc(userDocId).update({
-          profileImage: downloadURL
-        });
+            // Update Firestore with base64 image
+            await db.collection('users').doc(userDocId).update({
+              profileImage: base64Image
+            });
 
-        // Update local data
-        currentUser.profileImage = downloadURL;
-        originalData.profileImage = downloadURL;
+            // Update local data
+            currentUser.profileImage = base64Image;
+            originalData.profileImage = base64Image;
 
-        // Show the uploaded image
-        profileImage.innerHTML = `<img src="${downloadURL}" alt="Profilbild">`;
-        
-        alert('Profilbild erfolgreich hochgeladen!');
+            // Show the uploaded image
+            profileImage.innerHTML = `<img src="${base64Image}" alt="Profilbild">`;
+            
+            alert('Profilbild erfolgreich hochgeladen!');
+
+          } catch (error) {
+            console.error('Speichern Fehler:', error);
+            alert('Fehler beim Speichern des Bildes: ' + error.message);
+            displayUserData();
+          }
+        };
+
+        reader.onerror = () => {
+          alert('Fehler beim Lesen der Datei!');
+          displayUserData();
+        };
+
+        reader.readAsDataURL(file);
 
       } catch (error) {
         console.error('Upload Fehler:', error);
         alert('Fehler beim Hochladen des Bildes: ' + error.message);
-        // Restore previous image on error
         displayUserData();
       }
     });
