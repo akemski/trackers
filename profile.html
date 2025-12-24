@@ -26,200 +26,302 @@
       --border-hover: rgba(209,42,61,.45);
     }
 
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
 
     body {
-      margin: 0;
       font-family: 'Courier New', Courier, monospace;
       color: var(--text);
       background:
-        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), trans 55%),
-        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), trans 55%),
+        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
+        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height: 100vh;
-      overflow: hidden;
       font-size: 14px;
+      padding: 32px 16px;
     }
 
-.parent {
-  display: grid;
-  grid-template-columns: 300px 1fr; /* Profilbereich + Bereich für die Kasten */
-  grid-template-rows: auto auto 1fr; /* Feste Reihen für das Profil und die Überschrift, Rest flexibel für die Kasten */
-  grid-column-gap: 25px;
-  grid-row-gap: 20px;
-  max-width: 1024px;
-  margin: 0 auto;
-  padding: 32px 16px;
-}
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
 
-/* Profilbereich (links) */
-.div1 {
-  grid-area: 1 / 1 / 4 / 2; /* Der Profilbereich nimmt 3 Reihen und 1 Spalte ein */
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+    /* Linker Profilbereich */
+    .profile-section {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-.div1 img {
-  width: 100%;
-  max-width: 250px;
-  height: 250px;
-  border-radius: 12px;
-  object-fit: cover;
-}
+    .profile-image {
+      width: 100%;
+      height: 280px;
+      border-radius: var(--radius);
+      border: 2px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      overflow: hidden;
+    }
 
-.div1 .name {
-  font-size: 32px;
-  font-weight: 700;
-}
+    .profile-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-.div1 .status, .div1 .bio {
-  background-color: rgba(16, 16, 24, 0.95);
-  padding: 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-}
+    .profile-name {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+    }
 
-.div1 .status {
-  font-size: 16px;
-  color: var(--muted);
-}
+    .profile-status {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      color: var(--muted);
+    }
 
-.div1 .bio {
-  font-size: 16px;
-  color: var(--muted);
-}
+    .profile-bio {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
 
-/* Überschrift rechts oben */
-.div2 {
-  grid-area: 1 / 2 / 2 / 3; /* Überschrift ist der obere rechte Bereich */
-  background-color: rgba(16, 16, 24, 0.95);
-  padding: 16px;
-  border-radius: var(--radius);
-  font-size: 24px;
-  font-weight: 700;
-  text-align: center;
-}
+    .profile-bio h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
 
-/* Bereichs-Karten rechts unten (3x3 Grid) */
-.div3 {
-  grid-area: 2 / 2 / 4 / 3; /* Bereichs-Kartenbereich */
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
-  grid-template-rows: repeat(3, 1fr); /* 3 Reihen */
-  grid-gap: 20px;
-}
+    .profile-bio p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
 
-.box {
-  background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
-  border: 1px solid rgba(36,36,54,.9);
-  border-radius: var(--radius);
-  padding: 16px;
-  position: relative;
-}
+    /* Rechter Hauptbereich */
+    .main-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-.box h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
+    .header-box {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+    }
 
-.box p {
-  font-size: 14px;
-  color: var(--muted);
-  margin: 10px 0;
-}
+    .header-box h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
 
-.box .btn {
-  display: inline-block;
-  background-color: var(--red);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  text-align: center;
-}
+    /* 3x3 Grid für die Bereiche */
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
 
-.box .btn:hover {
-  background-color: var(--red2);
-}
+    .box {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
 
-/* Footer */
-.footer-note {
-  grid-area: 4 / 1 / 5 / 3;
-  color: rgba(184, 184, 210, 0.75);
-  font-size: 12px;
-  letter-spacing: 0.3px;
-  text-transform: uppercase;
-  font-weight: 300;
-  text-align: center;
-}
+    .box:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--glow);
+    }
 
-    @media (max-width: 768px) {
-      .parent {
-        grid-template-columns: 1fr;
+    .box h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .box p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--red);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      text-align: center;
+      transition: background-color 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn:hover {
+      background-color: var(--red2);
+    }
+
+    /* Footer */
+    .footer-note {
+      margin-top: 30px;
+      color: rgba(184, 184, 210, 0.6);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 300;
+      text-align: center;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        flex-direction: column;
       }
 
-      .div2 {
-        grid-template-columns: 1fr;
+      .profile-section {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .areas-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
+    @media (max-width: 640px) {
+      .areas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="parent">
-    <!-- Profilbereich (links) -->
-    <div class="div1">
-      <img src="path/to/placeholder.jpg" alt="Profilbild"> <!-- Profilbild -->
-      <div class="name">Nadira</div> <!-- Name -->
-      <div class="status">Status: Online</div> <!-- Status -->
-      <div class="bio">
+  <div class="container">
+    <!-- Linker Profilbereich -->
+    <aside class="profile-section">
+      <div class="profile-image">
+        <span>Profilbild bzw.<br>Platzhalter Bild</span>
+      </div>
+      
+      <div class="profile-name">
+        Name + SSO Name
+      </div>
+      
+      <div class="profile-status">
+        Status: Online
+      </div>
+      
+      <div class="profile-bio">
         <h3>Bio der Person</h3>
         <p>Hier kann die Bio des Mitglieds stehen, z.B. eine kurze Beschreibung über die Person und ihre Rolle im Club.</p>
       </div>
-    </div>
+    </aside>
 
-    <!-- Rechte Seite (Bereichs-Karten) -->
-    <div class="div2">
-      <div class="box">
-        <h3>Member Liste</h3>
-        <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
-        <a href="members.html" class="btn">Öffnen</a>
-      </div>
-      <div class="box">
-        <h3>Forum</h3>
-        <p>Diskutiere mit anderen über die neuesten Themen!</p>
-        <a href="forum.html" class="btn">Öffnen</a>
-      </div>
-      <div class="box">
-        <h3>Dressur</h3>
-        <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
-        <a href="dressur.html" class="btn">Öffnen</a>
-      </div>
-      <div class="box">
-        <h3>Platzhalter</h3>
-        <p>Beschreibung des Bereichs.</p>
-        <a href="#" class="btn">Öffnen</a>
-      </div>
-      <div class="box">
-        <h3>Platzhalter</h3>
-        <p>Beschreibung des Bereichs.</p>
-        <a href="#" class="btn">Öffnen</a>
-      </div>
-      <div class="box">
-        <h3>Platzhalter</h3>
-        <p>Beschreibung des Bereichs.</p>
-        <a href="#" class="btn">Öffnen</a>
-      </div>
-    </div>
+    <!-- Rechter Hauptbereich -->
+    <main class="main-section">
+      <!-- Header -->
+      <header class="header-box">
+        <h1>Dark Trackers</h1>
+      </header>
 
-    <!-- Footer -->
-    <div class="footer-note">
-      All actions logged • Protocol DT-01 • Compartmentalized access
-    </div>
+      <!-- 3x3 Grid -->
+      <div class="areas-grid">
+        <div class="box">
+          <h3>Member Liste</h3>
+          <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
+          <a href="members.html" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Forum</h3>
+          <p>Diskutiere mit anderen über die neuesten Themen!</p>
+          <a href="forum.html" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Dressur</h3>
+          <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
+          <a href="dressur.html" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+
+        <div class="box">
+          <h3>Platzhalter</h3>
+          <p>Kurze Beschreibung des Bereichs.</p>
+          <a href="#" class="btn">Öffnen</a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer-note">
+        All actions logged • Protocol DT-01 • Compartmentalized access
+      </footer>
+    </main>
   </div>
 </body>
 </html>
