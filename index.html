@@ -332,6 +332,12 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // normalizeRole-Funktion hinzufügen
+    function normalizeRole(role) {
+      const r = (role || "").toLowerCase().trim();
+      return r === "admin" ? "admin" : r === "leader" ? "leader" : r === "instruct" ? "instruct" : "member";
+    }
+
     // Debugging & Logs
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
