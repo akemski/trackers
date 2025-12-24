@@ -43,8 +43,8 @@
 
 .parent {
   display: grid;
-  grid-template-columns: 300px 1fr; /* Profilbereich + der restliche Bereich für die Kasten */
-  grid-template-rows: auto auto auto 1fr; /* 3 feste Reihen für Profil und Überschrift, 1 flexible Reihe für die Bereiche */
+  grid-template-columns: 300px 1fr; /* Profilbereich + Bereich für die Kasten */
+  grid-template-rows: auto auto 1fr; /* Feste Reihen für das Profil und die Überschrift, Rest flexibel für die Kasten */
   grid-column-gap: 25px;
   grid-row-gap: 20px;
   max-width: 1024px;
@@ -90,7 +90,7 @@
   color: var(--muted);
 }
 
-/* Überschrift Bereich rechts oben */
+/* Überschrift rechts oben */
 .div2 {
   grid-area: 1 / 2 / 2 / 3; /* Überschrift ist der obere rechte Bereich */
   background-color: rgba(16, 16, 24, 0.95);
@@ -101,9 +101,9 @@
   text-align: center;
 }
 
-/* Bereichs-Karten rechts unten */
+/* Bereichs-Karten rechts unten (3x3 Grid) */
 .div3 {
-  grid-area: 2 / 2 / 5 / 3; /* Bereichs-Kartenbereich */
+  grid-area: 2 / 2 / 4 / 3; /* Bereichs-Kartenbereich */
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 Spalten */
   grid-template-rows: repeat(3, 1fr); /* 3 Reihen */
@@ -147,7 +147,7 @@
 
 /* Footer */
 .footer-note {
-  grid-area: 5 / 1 / 6 / 3;
+  grid-area: 4 / 1 / 5 / 3;
   color: rgba(184, 184, 210, 0.75);
   font-size: 12px;
   letter-spacing: 0.3px;
