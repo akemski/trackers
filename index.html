@@ -3,39 +3,233 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Club Hub</title>
+  <title>Dark Trackers • Club Hub</title>
+
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; background: #0b0b10; color: #eee; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px; }
-    .card { background: #141420; border: 1px solid #24243a; border-radius: 16px; padding: 20px; }
-    h1,h2,h3 { margin: 0 0 10px; }
-    .muted { color:#b9b9d6; font-size: 14px; }
-    label { display:block; margin-top: 10px; }
-    input {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #2b2b45;
-      background:#0f0f18;
-      color:#eee;
+    :root{
+      --bg0:#07070a;
+      --bg1:#0b0b10;
+      --panel:#101018;
+      --panel2:#0e0e16;
+      --line:#242436;
+      --line2:#2b2b44;
+      --text:#ececf4;
+      --muted:#b8b8d2;
+
+      --red:#b0162a;
+      --red2:#d12a3d;
+
+      --glow: 0 0 0 1px rgba(209,42,61,.25), 0 0 40px rgba(176,22,42,.10);
+      --shadow: 0 14px 50px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.22), transparent 55%),
+        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+    }
+
+    .wrap{
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 34px 16px 60px;
+      position: relative;
+    }
+
+    /* subtle grid overlay */
+    .wrap:before{
+      content:"";
+      position:absolute;
+      inset: 0 0 auto 0;
+      height: 520px;
+      pointer-events:none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent);
+      opacity:.35;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(16,16,24,.92), rgba(10,10,16,.92));
+      border: 1px solid rgba(36,36,54,.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: calc(var(--radius) + 2px);
+      background: radial-gradient(800px 220px at 10% 0%, rgba(209,42,61,.16), transparent 65%);
+      pointer-events:none;
+    }
+
+    .titlebar{
+      display:flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1,h2,h3{ margin:0; letter-spacing:.2px; }
+    h1{ font-size: 28px; }
+    h2{ font-size: 22px; }
+    h3{ font-size: 18px; }
+
+    .muted{
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .tagline{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(12,12,18,.8);
+      border: 1px solid rgba(43,43,68,.9);
+      color:#d9d9ff;
+      font-size: 13px;
+      backdrop-filter: blur(6px);
+    }
+
+    .badge.red{
+      border-color: rgba(209,42,61,.45);
+      box-shadow: var(--glow);
+    }
+
+    label{ display:block; margin-top: 12px; }
+
+    input{
+      width:100%;
+      padding: 12px 13px;
+      border-radius: 14px;
+      border: 1px solid rgba(43,43,68,.9);
+      background: rgba(10,10,16,.85);
+      color: var(--text);
       outline: none;
+      transition: .15s ease;
     }
-    input:focus { border-color:#7c5cff; }
-    button { padding: 12px 14px; border-radius: 12px; border: 0; cursor: pointer; }
-    .btn { background: #7c5cff; color: white; }
-    .btn2 { background: #2a2a44; color: white; }
-    .row { display:flex; gap:12px; margin-top:12px; flex-wrap: wrap; }
-    .err { color:#ff6b6b; margin-top:10px; display:none; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
-    .box { background:#121220; border:1px solid #24243a; border-radius: 16px; padding: 16px; }
-    .pill {
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 6px 10px; border-radius: 999px;
-      background:#0f0f18; border:1px solid #2b2b45;
-      font-size: 13px; color:#d9d9ff;
+    input:focus{
+      border-color: rgba(209,42,61,.65);
+      box-shadow: var(--glow);
     }
-    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap: wrap; }
-    .hidden { display:none !important; }
+
+    .row{
+      display:flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    button{
+      border: 0;
+      cursor:pointer;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-weight: 650;
+      letter-spacing: .2px;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    button:active{ transform: translateY(1px); }
+
+    .btn{
+      background: linear-gradient(180deg, var(--red2), var(--red));
+      color: #fff;
+      box-shadow: var(--glow);
+    }
+    .btn:hover{ filter: brightness(1.06); }
+
+    .btn2{
+      background: rgba(26,26,40,.95);
+      color: #fff;
+      border: 1px solid rgba(43,43,68,.9);
+    }
+    .btn2:hover{ filter: brightness(1.08); }
+
+    .err{
+      display:none;
+      margin-top: 12px;
+      color: #ff7b86;
+      font-size: 14px;
+    }
+
+    .hidden{ display:none !important; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .box{
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid rgba(36,36,54,.9);
+      border-radius: 16px;
+      padding: 16px;
+      overflow:hidden;
+      position: relative;
+    }
+
+    .box:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(420px 160px at 20% 0%, rgba(209,42,61,.10), transparent 62%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .box > *{ position:relative; z-index: 1; }
+    .box p{ margin: 6px 0 12px; }
+
+    .box .btn{
+      width: 100%;
+      justify-content:center;
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(43,43,68,.75);
+      margin: 14px 0;
+    }
+
+    .footer-note{
+      margin-top: 14px;
+      color: rgba(184,184,210,.75);
+      font-size: 12px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 
@@ -44,12 +238,23 @@
 
     <!-- LOGIN -->
     <section id="loginPage" class="card">
-      <h1>Club Hub ✨</h1>
-      <p class="muted">Login mit Username + Passwort.</p>
+      <div class="titlebar">
+        <div>
+          <h1>Dark Trackers</h1>
+          <div class="tagline">
+            <span class="badge red">Restricted Access</span>
+            <span class="badge">Front Company Network</span>
+            <span class="badge">Clearance Required</span>
+          </div>
+          <div class="footer-note">internal use only • do not distribute</div>
+        </div>
+      </div>
 
-      <form id="loginForm">
+      <div class="divider"></div>
+
+      <form id="loginForm" style="position:relative; z-index:1;">
         <label class="muted" for="username">Username</label>
-        <input id="username" required placeholder="z.B. Marie" autocomplete="username" />
+        <input id="username" required placeholder="z.B. marie" autocomplete="username" />
 
         <label class="muted" for="password">Passwort</label>
         <input id="password" type="password" required placeholder="••••••••" autocomplete="current-password" />
@@ -64,49 +269,55 @@
 
     <!-- DASHBOARD -->
     <section id="dashPage" class="card hidden" style="margin-top:16px;">
-      <div class="topbar">
+      <div class="titlebar">
         <div>
-          <h2>Dein Club Hub</h2>
-          <p class="muted" style="margin:6px 0 0;">Wähle einen Bereich:</p>
+          <h2>Operations Hub</h2>
+          <p class="muted" style="margin:6px 0 0;">
+            Zugriff auf interne Bereiche – handle entsprechend deiner Clearance.
+          </p>
+          <div class="tagline">
+            <span class="badge">Dark Trackers Network</span>
+            <span class="badge">Cover: “—”</span>
+          </div>
         </div>
 
-        <div class="row" style="margin-top:0;">
-          <span class="pill" id="userPill">👤 —</span>
-          <span class="pill" id="rolePill">🔑 —</span>
+        <div class="row" style="margin-top: 0;">
+          <span class="badge" id="userPill">👤 —</span>
+          <span class="badge red" id="rolePill">🔑 —</span>
           <button class="btn2" id="logoutBtn" type="button">Logout</button>
         </div>
       </div>
 
       <div class="grid">
         <div class="box">
-          <h3>Forum</h3>
-          <p class="muted">Ankündigungen, Regeln, Chat.</p>
-          <button class="btn" onclick="location.href='forum.html'">Öffnen</button>
+          <h3>Briefing</h3>
+          <p class="muted">News, wichtige Infos, aktuelle Lage.</p>
+          <button class="btn" onclick="location.href='briefing.html'">Öffnen</button>
         </div>
 
         <div class="box">
-          <h3>Dressur</h3>
-          <p class="muted">Trainings, Lektionen, Tipps.</p>
-          <button class="btn" onclick="location.href='dressur.html'">Öffnen</button>
+          <h3>Archive</h3>
+          <p class="muted">Lore, Dossiers, Dokumente.</p>
+          <button class="btn" onclick="location.href='archive.html'">Öffnen</button>
         </div>
 
         <div class="box">
-          <h3>Trail</h3>
-          <p class="muted">Routen, Challenges, Screens.</p>
-          <button class="btn" onclick="location.href='trail.html'">Öffnen</button>
+          <h3>Comms</h3>
+          <p class="muted">Discord-Infos, Voice-Regeln, Kontakt.</p>
+          <button class="btn" onclick="location.href='comms.html'">Öffnen</button>
         </div>
 
         <!-- Instructor-only (oder höher) -->
         <div class="box" id="instructBox">
-          <h3>Instructor Corner</h3>
-          <p class="muted">Übungspläne, Aufgaben, Bewertungen.</p>
+          <h3>Instruction</h3>
+          <p class="muted">Trainings, Aufgaben, Bewertungen.</p>
           <button class="btn" onclick="location.href='instruct.html'">Öffnen</button>
         </div>
 
         <!-- Leader/Admin-only -->
         <div class="box" id="leaderBox">
-          <h3>Leitung</h3>
-          <p class="muted">Organisation, Termine, Teams.</p>
+          <h3>Leadership</h3>
+          <p class="muted">Planung, Termine, Organisation.</p>
           <button class="btn" onclick="location.href='leader.html'">Öffnen</button>
         </div>
 
@@ -116,6 +327,10 @@
           <p class="muted">User verwalten, Rollen setzen.</p>
           <button class="btn" onclick="location.href='admin.html'">Öffnen</button>
         </div>
+      </div>
+
+      <div class="footer-note" style="position:relative; z-index:1; margin-top: 16px;">
+        all actions logged • protocol DT-01 • compartmentalized access
       </div>
     </section>
 
@@ -127,12 +342,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ✅ 1) Firebase Config eintragen
+    // ✅ Firebase Config eintragen
     const firebaseConfig = {
-      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
-      authDomain: "trackers-ce3fb.firebaseapp.com",
-      projectId: "trackers-ce3fb"
-      // storageBucket / appId / senderId kannst du drin lassen, aber für das hier reichen die 3 meist schon
+      apiKey: "DEIN_API_KEY",
+      authDomain: "DEIN_AUTH_DOMAIN",
+      projectId: "DEIN_PROJECT_ID"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -153,13 +367,8 @@
     const leaderBox = document.getElementById("leaderBox");
     const adminBox = document.getElementById("adminBox");
 
-    // Rollen-Hierarchie (wer darf was sehen)
-    const roleRank = {
-      member: 1,
-      instruct: 2,
-      leader: 3,
-      admin: 4
-    };
+    // Rollen-Hierarchie
+    const roleRank = { member: 1, instruct: 2, leader: 3, admin: 4 };
 
     function normalizeRole(role) {
       const r = (role || "").toLowerCase().trim();
@@ -169,18 +378,13 @@
     function applyRoleUI(role) {
       const r = normalizeRole(role);
 
-      // default: alles erstmal verstecken, dann freischalten
+      // default verstecken
       instructBox.classList.add("hidden");
       leaderBox.classList.add("hidden");
       adminBox.classList.add("hidden");
 
-      // instruct corner: instruct oder höher
       if (roleRank[r] >= roleRank.instruct) instructBox.classList.remove("hidden");
-
-      // leitung: leader oder höher
       if (roleRank[r] >= roleRank.leader) leaderBox.classList.remove("hidden");
-
-      // admin panel: nur admin
       if (r === "admin") adminBox.classList.remove("hidden");
 
       rolePill.textContent = "🔑 " + r;
@@ -189,7 +393,6 @@
     function showDash(username, role) {
       loginPage.classList.add("hidden");
       dashPage.classList.remove("hidden");
-
       userPill.textContent = "👤 " + (username || "—");
       applyRoleUI(role);
     }
@@ -197,12 +400,11 @@
     function showLogin() {
       dashPage.classList.add("hidden");
       loginPage.classList.remove("hidden");
-
       userPill.textContent = "👤 —";
       rolePill.textContent = "🔑 —";
     }
 
-    // ✅ Login: Username + Passwort aus Firestore checken → dann Anonymous Auth
+    // Login: Username + Passwort aus Firestore checken → dann Anonymous Auth
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       loginError.style.display = "none";
@@ -219,20 +421,15 @@
 
         if (snap.empty) throw new Error("User nicht gefunden");
 
-        const userDoc = snap.docs[0];
-        const data = userDoc.data();
-
+        const data = snap.docs[0].data();
         if ((data.password || "") !== password) throw new Error("Falsches Passwort");
 
-        // Role speichern (damit wir sie nach Reload wieder haben)
         const role = normalizeRole(data.role);
+
         localStorage.setItem("clubUser", username);
         localStorage.setItem("clubRole", role);
 
-        // Anonymous sign-in (Session)
         await auth.signInAnonymously();
-
-        // UI direkt updaten
         showDash(username, role);
 
       } catch (err) {
@@ -242,7 +439,7 @@
       }
     });
 
-    // ✅ Session check
+    // Session check
     auth.onAuthStateChanged((user) => {
       if (user) {
         const username = localStorage.getItem("clubUser");
@@ -255,7 +452,7 @@
       }
     });
 
-    // ✅ Logout
+    // Logout
     logoutBtn.addEventListener("click", async () => {
       await auth.signOut();
     });
