@@ -3,408 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dark Trackers • Club Hub</title>
+  <title>Dark Trackers • Mein Profil</title>
 
   <style>
-    :root{
-      --bg0:#050505;
-      --bg1:#0b0b10;
-      --panel:#101018;
-      --panel2:#0e0e16;
-      --line:#242436;
-      --line2:#2b2b44;
-      --text:#ececf4;
-      --muted:#b8b8d2;
-
-      --red:#c53f3f;
-      --red2:#ff3b3b;
-
-      --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
-      --shadow: 0 14px 40px rgba(0,0,0,.45);
-      --radius: 0px; /* Ecken schärfer */
-      --border-color: rgba(37,37,55,.7);
-      --border-hover: rgba(209,42,61,.45);
-    }
-
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: 'Courier New', Courier, monospace;
-      color:var(--text);
-      background:
-        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
-        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      min-height:100vh;
-      overflow: hidden;
-      font-size: 14px;
-    }
-
-    .wrap{
-      max-width: 1024px;
-      margin: 0 auto;
-      padding: 32px 16px 60px;
-      position: relative;
-      color: #ccc;
-    }
-
-    /* Neues, weniger intensives Retro-Glitch für die Überschrift */
-    h1{
-      font-size: 36px;
-      font-family: 'Courier New', Courier, monospace;
-      text-transform: uppercase;
-      animation: glitchEffect 1.2s infinite;
-      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4);
-    }
-
-    @keyframes glitchEffect {
-      0% { text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4); }
-      50% { text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.7), -2px -2px 5px rgba(255, 59, 59, 0.3); }
-      100% { text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5), -1px -1px 2px rgba(255, 59, 59, 0.4); }
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(16,16,24,.95), rgba(12,12,16,.95));
-      border: 1px solid rgba(43,43,68,.9);
-      border-radius: var(--radius); /* Ecken schärfer */
-      box-shadow: var(--shadow);
-      padding: 22px;
-      position: relative;
-      overflow: hidden;
-      background-image: url('https://www.transparenttextures.com/patterns/dark-mesh.png');
-    }
-
-    .titlebar{
-      display:flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 14px;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
-    }
-
-    h2,h3{ margin:0; }
-    .muted{
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.35;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(14,14,22,.85);
-      border: 1px solid rgba(43,43,68,.9);
-      color:#d9d9ff;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: bold;
-      backdrop-filter: blur(6px);
-    }
-
-    .badge.red{
-      border-color: rgba(209,42,61,.45);
-      box-shadow: var(--glow);
-    }
-
-    .divider{
-      height:1px;
-      background: rgba(43,43,68,.75);
-      margin: 14px 0;
-    }
-
-    label{ display:block; margin-top: 12px; }
-
-    input{
-      width:100%;
-      padding: 12px 13px;
-      border-radius: 14px;
-      border: 1px solid rgba(43,43,68,.9);
-      background: rgba(10,10,16,.85);
-      color: var(--text);
-      outline: none;
-      transition: .15s ease;
-    }
-    input:focus{
-      border-color: rgba(209,42,61,.65);
-      box-shadow: var(--glow);
-    }
-
-    .row{
-      display:flex;
-      gap: 12px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
-
-    button{
-      border: 0;
-      cursor:pointer;
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-weight: 650;
-      letter-spacing: .2px;
-      transition: transform .12s ease, filter .12s ease;
-      background: var(--red);
-      color: #fff;
-      box-shadow: var(--glow);
-    }
-
-    button:active{ transform: translateY(1px); }
-
-    .btn2{
-      background: rgba(26,26,40,.95);
-      color: #fff;
-      border: 1px solid rgba(43,43,68,.9);
-    }
-
-    .btn2:hover{ filter: brightness(1.08); }
-
-    .err{
-      display:none;
-      margin-top: 12px;
-      color: #ff7b86;
-      font-size: 14px;
-    }
-
-    .hidden{ display:none !important; }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .box{
-      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
-      border: 1px solid rgba(36,36,54,.9);
-      border-radius: 16px;
-      padding: 16px;
-      overflow:hidden;
-      position: relative;
-    }
-
-    .box:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: radial-gradient(420px 160px at 20% 0%, rgba(209,42,61,.10), transparent 62%);
-      pointer-events:none;
-      opacity:.9;
-    }
-
-    .box .btn{
-      width: 100%;
-      justify-content:center;
-    }
-
-    .footer-note{
-      margin-top: 14px;
-      color: rgba(184,184,210,.75);
-      font-size: 12px;
-      letter-spacing: .3px;
-      text-transform: uppercase;
-    }
-
+    /* Dein CSS für das Profil-Dashboard (wie bereits beschrieben) bleibt unverändert */
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
-    <!-- LOGIN -->
-    <section id="loginPage" class="card">
-      <div class="titlebar">
-        <div>
-          <h1>Dark Trackers</h1>
-          <div class="tagline">
-            <span class="badge red">Restricted Access</span>
-            <span class="badge">Front Company Network</span>
-            <span class="badge">Clearance Required</span>
-          </div>
-          <div class="footer-note">internal use only • do not distribute</div>
-        </div>
+    <!-- Header für das Profil -->
+    <div class="header">
+      <img src="path/to/placeholder.jpg" alt="Profilbild"> <!-- Platzhalterbild -->
+      <div class="user-info">
+        <h1>Nadira</h1> <!-- Beispiel-Name -->
+        <div class="status">Status: Online</div> <!-- Status -->
       </div>
+    </div>
 
-      <div class="divider"></div>
-
-      <form id="loginForm">
-        <label class="muted" for="username">Username</label>
-        <input id="username" required placeholder="z.B. marie" autocomplete="username" />
-
-        <label class="muted" for="password">Passwort</label>
-        <input id="password" type="password" required placeholder="••••••••" autocomplete="current-password" />
-
-        <div class="row">
-          <button class="btn" type="submit">Login</button>
-        </div>
-
-        <div id="loginError" class="err">Login fehlgeschlagen 🥲</div>
-      </form>
-    </section>
-
-    <!-- DASHBOARD -->
-    <section id="dashPage" class="card hidden" style="margin-top:16px;">
-      <div class="titlebar">
-        <div>
-          <h2>Operations Hub</h2>
-          <p class="muted">Zugang zu internen Bereichen – handle entsprechend deiner Clearance.</p>
-        </div>
-
-        <div class="row">
-          <span class="badge" id="userPill">👤 —</span>
-          <span class="badge red" id="rolePill">🔑 —</span>
-          <button class="btn2" id="logoutBtn" type="button">Logout</button>
-        </div>
+    <!-- Kartenbereich für die verschiedenen Bereiche -->
+    <div class="grid">
+      <!-- Deine Karten wie "Member Liste", "Forum", etc. -->
+      <div class="box">
+        <h3>Member Liste</h3>
+        <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
+        <a href="members.html" class="btn">Öffnen</a>
       </div>
-
-      <div class="grid">
-        <div class="box">
-          <h3>Briefing</h3>
-          <p class="muted">News, wichtige Infos, aktuelle Lage.</p>
-          <button class="btn" onclick="location.href='briefing.html'">Öffnen</button>
-        </div>
-
-        <div class="box">
-          <h3>Archive</h3>
-          <p class="muted">Lore, Dossiers, Dokumente.</p>
-          <button class="btn" onclick="location.href='archive.html'">Öffnen</button>
-        </div>
-
-        <div class="box">
-          <h3>Comms</h3>
-          <p class="muted">Discord-Infos, Voice-Regeln, Kontakt.</p>
-          <button class="btn" onclick="location.href='comms.html'">Öffnen</button>
-        </div>
-
-        <!-- Instructor-only -->
-        <div class="box" id="instructBox">
-          <h3>Instruction</h3>
-          <p class="muted">Trainings, Aufgaben, Bewertungen.</p>
-          <button class="btn" onclick="location.href='instruct.html'">Öffnen</button>
-        </div>
-
-        <!-- Leader/Admin-only -->
-        <div class="box" id="leaderBox">
-          <h3>Leadership</h3>
-          <p class="muted">Planung, Termine, Organisation.</p>
-          <button class="btn" onclick="location.href='leader.html'">Öffnen</button>
-        </div>
-
-        <!-- Admin-only -->
-        <div class="box" id="adminBox">
-          <h3>Admin Panel</h3>
-          <p class="muted">User verwalten, Rollen setzen.</p>
-          <button class="btn" onclick="location.href='admin.html'">Öffnen</button>
-        </div>
+      <div class="box">
+        <h3>Forum</h3>
+        <p>Diskutiere mit anderen über die neuesten Themen!</p>
+        <a href="forum.html" class="btn">Öffnen</a>
       </div>
+      <!-- Weitere Karten hinzufügen -->
+    </div>
 
-      <div class="footer-note" style="margin-top: 16px;">
-        all actions logged • protocol DT-01 • compartmentalized access
-      </div>
-    </section>
+    <!-- Bio-Bereich -->
+    <div class="bio-section">
+      <h2>Bio der Person</h2>
+      <p>Hier kann die Bio des Mitglieds stehen, z.B. eine kurze Beschreibung über die Person und ihre Rolle im Club.</p>
+    </div>
 
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
   <script>
-    // Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
-      authDomain: "trackers-ce3fb.firebaseapp.com",
-      projectId: "trackers-ce3fb",
-      storageBucket: "trackers-ce3fb.firebasestorage.app",
-      messagingSenderId: "385800199430",
-      appId: "1:385800199430:web:93fe876ed4dfc6550a9287",
-      measurementId: "G-VXYWY0ELKF"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // normalizeRole-Funktion hinzufügen
-    function normalizeRole(role) {
-      const r = (role || "").toLowerCase().trim();
-      return r === "admin" ? "admin" : r === "leader" ? "leader" : r === "instruct" ? "instruct" : "member";
+    // Wenn der Benutzer nicht eingeloggt ist, zurück zur Login-Seite leiten
+    if (!localStorage.getItem("clubUser")) {
+      window.location.href = "index.html"; // Zurück zur Login-Seite
     }
-
-    // showDash Funktion hinzufügen
-    function showDash(username, role) {
-      loginPage.classList.add("hidden");
-      dashPage.classList.remove("hidden");
-      userPill.textContent = "👤 " + (username || "—");
-      rolePill.textContent = "🔑 " + role;
-
-      // Rollenbezogene UI-Anpassungen
-      applyRoleUI(role);
-    }
-
-    function applyRoleUI(role) {
-      const r = normalizeRole(role);
-      instructBox.classList.add("hidden");
-      leaderBox.classList.add("hidden");
-      adminBox.classList.add("hidden");
-
-      if (r === "instruct") instructBox.classList.remove("hidden");
-      if (r === "leader") leaderBox.classList.remove("hidden");
-      if (r === "admin") adminBox.classList.remove("hidden");
-    }
-
-    // Debugging & Logs
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      loginError.style.display = "none";
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-
-      console.log("Login gestartet...");
-
-      try {
-        console.log("Suche nach User:", username);
-        const snap = await db
-          .collection("users")
-          .where("username", "==", username)
-          .limit(1)
-          .get();
-
-        console.log("Firestore Antwort:", snap);
-
-        if (snap.empty) throw new Error("User nicht gefunden");
-
-        const userDoc = snap.docs[0];
-        const data = userDoc.data();
-
-        console.log("User gefunden:", data);
-
-        if ((data.password || "") !== password) throw new Error("Falsches Passwort");
-
-        const role = normalizeRole(data.role);
-
-        console.log("Login erfolgreich, Rolle:", role);
-
-        localStorage.setItem("clubUser", username);
-        localStorage.setItem("clubRole", role);
-
-        await auth.signInAnonymously();
-        showDash(username, role);
-
-      } catch (err) {
-        console.error("Login Error:", err);
-        loginError.style.display = "block";
-        loginError.textContent = `Fehler: ${err.message}`;
-      }
-    });
   </script>
 </body>
 </html>
