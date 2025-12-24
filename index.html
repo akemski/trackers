@@ -338,6 +338,28 @@
       return r === "admin" ? "admin" : r === "leader" ? "leader" : r === "instruct" ? "instruct" : "member";
     }
 
+    // showDash Funktion hinzufügen
+    function showDash(username, role) {
+      loginPage.classList.add("hidden");
+      dashPage.classList.remove("hidden");
+      userPill.textContent = "👤 " + (username || "—");
+      rolePill.textContent = "🔑 " + role;
+
+      // Rollenbezogene UI-Anpassungen
+      applyRoleUI(role);
+    }
+
+    function applyRoleUI(role) {
+      const r = normalizeRole(role);
+      instructBox.classList.add("hidden");
+      leaderBox.classList.add("hidden");
+      adminBox.classList.add("hidden");
+
+      if (r === "instruct") instructBox.classList.remove("hidden");
+      if (r === "leader") leaderBox.classList.remove("hidden");
+      if (r === "admin") adminBox.classList.remove("hidden");
+    }
+
     // Debugging & Logs
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
