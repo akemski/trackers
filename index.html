@@ -1,90 +1,264 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club Hub</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Club Hub</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #0b0b10; color: #eee; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px; }
+    .card { background: #141420; border: 1px solid #24243a; border-radius: 16px; padding: 20px; }
+    h1,h2,h3 { margin: 0 0 10px; }
+    .muted { color:#b9b9d6; font-size: 14px; }
+    label { display:block; margin-top: 10px; }
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #2b2b45;
+      background:#0f0f18;
+      color:#eee;
+      outline: none;
+    }
+    input:focus { border-color:#7c5cff; }
+    button { padding: 12px 14px; border-radius: 12px; border: 0; cursor: pointer; }
+    .btn { background: #7c5cff; color: white; }
+    .btn2 { background: #2a2a44; color: white; }
+    .row { display:flex; gap:12px; margin-top:12px; flex-wrap: wrap; }
+    .err { color:#ff6b6b; margin-top:10px; display:none; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 16px; }
+    .box { background:#121220; border:1px solid #24243a; border-radius: 16px; padding: 16px; }
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius: 999px;
+      background:#0f0f18; border:1px solid #2b2b45;
+      font-size: 13px; color:#d9d9ff;
+    }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap: wrap; }
+    .hidden { display:none !important; }
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
 
-<!-- Login-Seite -->
-<div id="login-page" class="login-container">
-    <h1>Willkommen im Club Hub!</h1>
-    <form id="login-form">
-        <label for="username">Benutzername:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Passwort:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
-    </form>
-    <p id="login-error" style="color:red; display:none;">Benutzername oder Passwort falsch.</p>
-</div>
+    <!-- LOGIN -->
+    <section id="loginPage" class="card">
+      <h1>Club Hub ✨</h1>
+      <p class="muted">Login mit Username + Passwort.</p>
 
-<!-- Dashboard-Seite (nach Login) -->
-<div id="dashboard-page" class="dashboard" style="display:none;">
-    <h1>Willkommen im Club Hub!</h1>
-    <div class="box-container">
-        <div class="box">
-            <h2>Forum</h2>
-            <button onclick="window.location.href='forum.html'">Zum Forum</button>
-        </div>
-        <div class="box">
-            <h2>Dressur</h2>
-            <button onclick="window.location.href='dressur.html'">Zum Bereich Dressur</button>
-        </div>
-        <div class="box">
-            <h2>Trail</h2>
-            <button onclick="window.location.href='trail.html'">Zum Trail-Bereich</button>
-        </div>
-    </div>
-</div>
+      <form id="loginForm">
+        <label class="muted" for="username">Username</label>
+        <input id="username" required placeholder="z.B. Marie" autocomplete="username" />
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-<script>
-    // Firebase config
+        <label class="muted" for="password">Passwort</label>
+        <input id="password" type="password" required placeholder="••••••••" autocomplete="current-password" />
+
+        <div class="row">
+          <button class="btn" type="submit">Login</button>
+        </div>
+
+        <div id="loginError" class="err">Login fehlgeschlagen 🥲</div>
+      </form>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashPage" class="card hidden" style="margin-top:16px;">
+      <div class="topbar">
+        <div>
+          <h2>Dein Club Hub</h2>
+          <p class="muted" style="margin:6px 0 0;">Wähle einen Bereich:</p>
+        </div>
+
+        <div class="row" style="margin-top:0;">
+          <span class="pill" id="userPill">👤 —</span>
+          <span class="pill" id="rolePill">🔑 —</span>
+          <button class="btn2" id="logoutBtn" type="button">Logout</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="box">
+          <h3>Forum</h3>
+          <p class="muted">Ankündigungen, Regeln, Chat.</p>
+          <button class="btn" onclick="location.href='forum.html'">Öffnen</button>
+        </div>
+
+        <div class="box">
+          <h3>Dressur</h3>
+          <p class="muted">Trainings, Lektionen, Tipps.</p>
+          <button class="btn" onclick="location.href='dressur.html'">Öffnen</button>
+        </div>
+
+        <div class="box">
+          <h3>Trail</h3>
+          <p class="muted">Routen, Challenges, Screens.</p>
+          <button class="btn" onclick="location.href='trail.html'">Öffnen</button>
+        </div>
+
+        <!-- Instructor-only (oder höher) -->
+        <div class="box" id="instructBox">
+          <h3>Instructor Corner</h3>
+          <p class="muted">Übungspläne, Aufgaben, Bewertungen.</p>
+          <button class="btn" onclick="location.href='instruct.html'">Öffnen</button>
+        </div>
+
+        <!-- Leader/Admin-only -->
+        <div class="box" id="leaderBox">
+          <h3>Leitung</h3>
+          <p class="muted">Organisation, Termine, Teams.</p>
+          <button class="btn" onclick="location.href='leader.html'">Öffnen</button>
+        </div>
+
+        <!-- Admin-only -->
+        <div class="box" id="adminBox">
+          <h3>Admin Panel</h3>
+          <p class="muted">User verwalten, Rollen setzen.</p>
+          <button class="btn" onclick="location.href='admin.html'">Öffnen</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Firebase (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ✅ 1) Firebase Config eintragen
     const firebaseConfig = {
-        apiKey: "AIzaSyCambRkpVrLY3pTSAoEXqqkgUh8BZh_zjI",
-        authDomain: "trackers-7e96a.firebaseapp.com",
-        projectId: "trackers-7e96a",
-        storageBucket: "trackers-7e96a.firebasestorage.app",
-        messagingSenderId: "799369722850",
-        appId: "1:799369722850:web:32adab4fea72654a2d57bb"
+      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
+      authDomain: "trackers-ce3fb.firebaseapp.com",
+      projectId: "trackers-ce3fb"
+      // storageBucket / appId / senderId kannst du drin lassen, aber für das hier reichen die 3 meist schon
     };
 
-    // Firebase initialisieren
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Login-Funktion
-    const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('login-error');
-    const loginPage = document.getElementById('login-page');
-    const dashboardPage = document.getElementById('dashboard-page');
+    // DOM
+    const loginPage = document.getElementById("loginPage");
+    const dashPage = document.getElementById("dashPage");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    const userPill = document.getElementById("userPill");
+    const rolePill = document.getElementById("rolePill");
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+    const instructBox = document.getElementById("instructBox");
+    const leaderBox = document.getElementById("leaderBox");
+    const adminBox = document.getElementById("adminBox");
 
-        // Firebase Login
-        auth.signInWithEmailAndPassword(username, password)
-            .then((userCredential) => {
-                // Erfolgreiches Login
-                loginPage.style.display = 'none';
-                dashboardPage.style.display = 'block';
-            })
-            .catch((error) => {
-                // Fehler beim Login
-                loginError.style.display = 'block';
-                console.error(error.message);
-            });
+    // Rollen-Hierarchie (wer darf was sehen)
+    const roleRank = {
+      member: 1,
+      instruct: 2,
+      leader: 3,
+      admin: 4
+    };
+
+    function normalizeRole(role) {
+      const r = (role || "").toLowerCase().trim();
+      return roleRank[r] ? r : "member";
+    }
+
+    function applyRoleUI(role) {
+      const r = normalizeRole(role);
+
+      // default: alles erstmal verstecken, dann freischalten
+      instructBox.classList.add("hidden");
+      leaderBox.classList.add("hidden");
+      adminBox.classList.add("hidden");
+
+      // instruct corner: instruct oder höher
+      if (roleRank[r] >= roleRank.instruct) instructBox.classList.remove("hidden");
+
+      // leitung: leader oder höher
+      if (roleRank[r] >= roleRank.leader) leaderBox.classList.remove("hidden");
+
+      // admin panel: nur admin
+      if (r === "admin") adminBox.classList.remove("hidden");
+
+      rolePill.textContent = "🔑 " + r;
+    }
+
+    function showDash(username, role) {
+      loginPage.classList.add("hidden");
+      dashPage.classList.remove("hidden");
+
+      userPill.textContent = "👤 " + (username || "—");
+      applyRoleUI(role);
+    }
+
+    function showLogin() {
+      dashPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+
+      userPill.textContent = "👤 —";
+      rolePill.textContent = "🔑 —";
+    }
+
+    // ✅ Login: Username + Passwort aus Firestore checken → dann Anonymous Auth
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      loginError.style.display = "none";
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        const snap = await db
+          .collection("users")
+          .where("username", "==", username)
+          .limit(1)
+          .get();
+
+        if (snap.empty) throw new Error("User nicht gefunden");
+
+        const userDoc = snap.docs[0];
+        const data = userDoc.data();
+
+        if ((data.password || "") !== password) throw new Error("Falsches Passwort");
+
+        // Role speichern (damit wir sie nach Reload wieder haben)
+        const role = normalizeRole(data.role);
+        localStorage.setItem("clubUser", username);
+        localStorage.setItem("clubRole", role);
+
+        // Anonymous sign-in (Session)
+        await auth.signInAnonymously();
+
+        // UI direkt updaten
+        showDash(username, role);
+
+      } catch (err) {
+        console.error(err);
+        loginError.style.display = "block";
+        loginError.textContent = "Login fehlgeschlagen 🥲";
+      }
     });
-</script>
 
+    // ✅ Session check
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        const username = localStorage.getItem("clubUser");
+        const role = localStorage.getItem("clubRole");
+        showDash(username, role);
+      } else {
+        localStorage.removeItem("clubUser");
+        localStorage.removeItem("clubRole");
+        showLogin();
+      }
+    });
+
+    // ✅ Logout
+    logoutBtn.addEventListener("click", async () => {
+      await auth.signOut();
+    });
+  </script>
 </body>
 </html>
-
