@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dark Trackers • Member Liste</title>
+
+  <style>
+    :root {
+      --bg0: #050505;
+      --bg1: #0b0b10;
+      --panel: #101018;
+      --panel2: #0e0e16;
+      --line: #242436;
+      --line2: #2b2b44;
+      --text: #ececf4;
+      --muted: #b8b8d2;
+
+      --red: #c53f3f;
+      --red2: #ff3b3b;
+
+      --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
+        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+      font-size: 15px;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      background: var(--panel);
+      border: 3px solid var(--line);
+      padding: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .back-btn {
+      background: var(--panel);
+      border: 3px solid var(--line);
+      padding: 12px 24px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      border-color: var(--red);
+      background: var(--bg1);
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    /* Members Grid */
+    .members-container {
+      background: var(--panel);
+      border: 4px solid var(--line);
+      padding: 30px;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    /* Member Card */
+    .member-card {
+      background: var(--bg1);
+      border: 3px solid var(--line2);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      transition: border-color 0.2s ease;
+    }
+
+    .member-card:hover {
+      border-color: var(--red);
+    }
+
+    .member-image {
+      width: 150px;
+      height: 150px;
+      border: 2px solid var(--line);
+      background: var(--panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .member-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .member-image span {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .member-info {
+      text-align: center;
+      width: 100%;
+    }
+
+    .member-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .member-ingame {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .member-rank {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+
+    .member-rank.leader {
+      background: #d4af37;
+    }
+
+    .member-rank.admin {
+      background: #8b0000;
+    }
+
+    /* Footer */
+    .footer-note {
+      margin-top: 30px;
+      color: rgba(184, 184, 210, 0.6);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 300;
+      text-align: center;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        text-align: center;
+        justify-content: center;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .members-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Member Liste</h1>
+      <a href="profile.html" class="back-btn">← Zurück zum Profil</a>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+      Lade Mitglieder...
+    </div>
+
+    <!-- Members Container -->
+    <div class="members-container" id="membersContainer" style="display: none;">
+      <div class="members-grid" id="membersGrid">
+        <!-- Members will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <h2>Keine Mitglieder gefunden</h2>
+      <p>Es sind noch keine Mitglieder registriert.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-note">
+      All actions logged • Protocol DT-01 • Compartmentalized access
+    </footer>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
+      authDomain: "trackers-ce3fb.firebaseapp.com",
+      projectId: "trackers-ce3fb",
+      storageBucket: "trackers-ce3fb.firebasestorage.app",
+      messagingSenderId: "385800199430",
+      appId: "1:385800199430:web:93fe876ed4dfc6550a9287",
+      measurementId: "G-VXYWY0ELKF"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // DOM Elements
+    const loadingState = document.getElementById('loadingState');
+    const membersContainer = document.getElementById('membersContainer');
+    const membersGrid = document.getElementById('membersGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    // Check Login
+    const username = localStorage.getItem('clubUser');
+    if (!username) {
+      window.location.href = 'index.html';
+    }
+
+    // Get Rank Display Name
+    function getRankDisplay(rank) {
+      if (!rank) return 'Mitglied';
+      return rank;
+    }
+
+    // Get Rank Class for styling
+    function getRankClass(rank) {
+      if (!rank) return '';
+      const r = rank.toLowerCase();
+      if (r.includes('leader') || r.includes('leiter')) return 'leader';
+      if (r.includes('admin')) return 'admin';
+      return '';
+    }
+
+    // Create Member Card
+    function createMemberCard(member) {
+      const card = document.createElement('div');
+      card.className = 'member-card';
+
+      // Profile Image
+      const imageDiv = document.createElement('div');
+      imageDiv.className = 'member-image';
+      if (member.profileImage) {
+        imageDiv.innerHTML = `<img src="${member.profileImage}" alt="${member.displayName || member.username}">`;
+      } else {
+        imageDiv.innerHTML = '<span>Kein Bild</span>';
+      }
+
+      // Member Info
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'member-info';
+
+      const displayName = member.displayName || member.username || 'Unbekannt';
+      const ingameName = member.ingameName || '';
+      const rank = member.rank || 'Mitglied';
+
+      infoDiv.innerHTML = `
+        <div class="member-name">${displayName}</div>
+        ${ingameName ? `<div class="member-ingame">${ingameName}</div>` : ''}
+        <div class="member-rank ${getRankClass(rank)}">${getRankDisplay(rank)}</div>
+      `;
+
+      card.appendChild(imageDiv);
+      card.appendChild(infoDiv);
+
+      return card;
+    }
+
+    // Load Members
+    async function loadMembers() {
+      try {
+        const snapshot = await db.collection('users').get();
+
+        loadingState.style.display = 'none';
+
+        if (snapshot.empty) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        membersContainer.style.display = 'block';
+
+        // Sort members: Admins first, then Leaders, then others
+        const members = [];
+        snapshot.forEach(doc => {
+          members.push(doc.data());
+        });
+
+        // Sort by rank priority
+        members.sort((a, b) => {
+          const getRankPriority = (rank) => {
+            if (!rank) return 3;
+            const r = rank.toLowerCase();
+            if (r.includes('admin')) return 0;
+            if (r.includes('leader') || r.includes('leiter')) return 1;
+            return 2;
+          };
+
+          const priorityA = getRankPriority(a.rank);
+          const priorityB = getRankPriority(b.rank);
+
+          if (priorityA !== priorityB) {
+            return priorityA - priorityB;
+          }
+
+          // If same priority, sort alphabetically by displayName
+          const nameA = (a.displayName || a.username || '').toLowerCase();
+          const nameB = (b.displayName || b.username || '').toLowerCase();
+          return nameA.localeCompare(nameB);
+        });
+
+        // Create cards
+        members.forEach(member => {
+          const card = createMemberCard(member);
+          membersGrid.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error('Fehler beim Laden der Mitglieder:', error);
+        loadingState.innerHTML = 'Fehler beim Laden der Mitglieder!';
+      }
+    }
+
+    // Load members on page load
+    loadMembers();
+  </script>
+</body>
+</html>
