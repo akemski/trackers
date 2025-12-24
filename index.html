@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Hub</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Login-Seite -->
+<div id="login-page" class="login-container">
+    <h1>Willkommen im Club Hub!</h1>
+    <form id="login-form">
+        <label for="username">Benutzername:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Passwort:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p id="login-error" style="color:red; display:none;">Benutzername oder Passwort falsch.</p>
+</div>
+
+<!-- Dashboard-Seite (nach Login) -->
+<div id="dashboard-page" class="dashboard" style="display:none;">
+    <h1>Willkommen im Club Hub!</h1>
+    <div class="box-container">
+        <div class="box">
+            <h2>Forum</h2>
+            <button onclick="window.location.href='forum.html'">Zum Forum</button>
+        </div>
+        <div class="box">
+            <h2>Dressur</h2>
+            <button onclick="window.location.href='dressur.html'">Zum Bereich Dressur</button>
+        </div>
+        <div class="box">
+            <h2>Trail</h2>
+            <button onclick="window.location.href='trail.html'">Zum Trail-Bereich</button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+<script>
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "DEIN_API_KEY",
+        authDomain: "DEIN_AUTH_DOMAIN",
+        projectId: "DEIN_PROJECT_ID",
+        storageBucket: "DEIN_STORAGE_BUCKET",
+        messagingSenderId: "DEIN_SENDER_ID",
+        appId: "DEIN_APP_ID"
+    };
+
+    // Firebase initialisieren
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Login-Funktion
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const loginPage = document.getElementById('login-page');
+    const dashboardPage = document.getElementById('dashboard-page');
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Firebase Login
+        auth.signInWithEmailAndPassword(username, password)
+            .then((userCredential) => {
+                // Erfolgreiches Login
+                loginPage.style.display = 'none';
+                dashboardPage.style.display = 'block';
+            })
+            .catch((error) => {
+                // Fehler beim Login
+                loginError.style.display = 'block';
+                console.error(error.message);
+            });
+    });
+</script>
+
+</body>
+</html>
