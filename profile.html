@@ -61,9 +61,15 @@
       gap: 25px;
     }
 
-    .profile-image {
+    .profile-image-wrapper {
+      position: relative;
       width: 100%;
       height: 320px;
+    }
+
+    .profile-image {
+      width: 100%;
+      height: 100%;
       border: 3px solid var(--line);
       background: var(--panel);
       display: flex;
@@ -73,12 +79,34 @@
       font-size: 14px;
       text-align: center;
       overflow: hidden;
+      position: relative;
     }
 
     .profile-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .profile-image.clickable {
+      cursor: pointer;
+    }
+
+    .profile-image.clickable:hover::after {
+      content: 'KLICKEN ZUM ÄNDERN';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.85);
+      padding: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .image-upload {
+      display: none;
     }
 
     .profile-name {
@@ -95,6 +123,20 @@
       border: 3px solid var(--line);
       padding: 18px;
       color: var(--muted);
+      font-size: 15px;
+    }
+
+    .profile-status.view-mode {
+      cursor: default;
+    }
+
+    .profile-status input {
+      width: 100%;
+      background: var(--bg1);
+      border: 2px solid var(--line2);
+      color: var(--text);
+      padding: 10px;
+      font-family: inherit;
       font-size: 15px;
     }
 
@@ -115,6 +157,65 @@
       font-size: 15px;
       line-height: 1.7;
       color: var(--muted);
+      white-space: pre-wrap;
+    }
+
+    .profile-bio textarea {
+      width: 100%;
+      background: var(--bg1);
+      border: 2px solid var(--line2);
+      color: var(--text);
+      padding: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    /* Edit/Save/Logout Buttons */
+    .action-btn {
+      background: var(--panel);
+      border: 3px solid var(--line);
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      font-family: inherit;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .action-btn:hover {
+      border-color: var(--red);
+      background: var(--bg1);
+    }
+
+    .save-btn {
+      background-color: var(--red);
+      border-color: var(--red);
+      color: white;
+    }
+
+    .save-btn:hover {
+      background-color: var(--red2);
+      border-color: var(--red2);
+    }
+
+    .logout-btn {
+      margin-top: 10px;
+    }
+
+    .logout-btn:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     /* Rechter Hauptbereich */
@@ -215,6 +316,13 @@
       text-align: center;
     }
 
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+    }
+
     @media (max-width: 1024px) {
       .container {
         flex-direction: column;
@@ -240,25 +348,48 @@
 </head>
 
 <body>
-  <div class="container">
+  <div class="loading" id="loadingState">
+    Lade Profildaten...
+  </div>
+
+  <div class="container hidden" id="mainContent">
     <!-- Linker Profilbereich -->
     <aside class="profile-section">
-      <div class="profile-image">
-        <span>Profilbild bzw.<br>Platzhalter Bild</span>
+      <!-- Profilbild -->
+      <div class="profile-image-wrapper">
+        <div class="profile-image" id="profileImage">
+          <span>Kein Profilbild</span>
+        </div>
+        <input type="file" id="imageUpload" class="image-upload" accept="image/*">
       </div>
       
-      <div class="profile-name">
-        Name + SSO Name
+      <!-- Name -->
+      <div class="profile-name" id="profileName">
+        Lädt...
       </div>
       
-      <div class="profile-status">
-        Status: Online
+      <!-- Status -->
+      <div class="profile-status view-mode" id="statusContainer">
+        <span id="statusDisplay">Status: Lädt...</span>
+        <input type="text" id="statusInput" class="hidden" placeholder="z.B. Online, Beschäftigt, AFK...">
       </div>
       
+      <!-- Bio -->
       <div class="profile-bio">
         <h3>Bio der Person</h3>
-        <p>Hier kann die Bio des Mitglieds stehen, z.B. eine kurze Beschreibung über die Person und ihre Rolle im Club.</p>
+        <div id="bioContainer">
+          <p id="bioDisplay">Lädt Bio...</p>
+          <textarea id="bioInput" class="hidden" placeholder="Schreibe etwas über dich..."></textarea>
+        </div>
       </div>
+
+      <!-- Edit/Save Button -->
+      <button class="action-btn" id="editBtn">Profil Bearbeiten</button>
+      <button class="action-btn save-btn hidden" id="saveBtn">Änderungen Speichern</button>
+      <button class="action-btn hidden" id="cancelBtn">Abbrechen</button>
+
+      <!-- Logout Button -->
+      <button class="action-btn logout-btn" id="logoutBtn">Logout</button>
     </aside>
 
     <!-- Rechter Hauptbereich -->
@@ -271,60 +402,60 @@
       <!-- 3x3 Grid -->
       <div class="areas-container">
         <div class="areas-grid">
-        <div class="box">
-          <h3>Member Liste</h3>
-          <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
-          <a href="members.html" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Member Liste</h3>
+            <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
+            <a href="members.html" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Forum</h3>
-          <p>Diskutiere mit anderen über die neuesten Themen!</p>
-          <a href="forum.html" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Forum</h3>
+            <p>Diskutiere mit anderen über die neuesten Themen!</p>
+            <a href="forum.html" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Dressur</h3>
-          <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
-          <a href="dressur.html" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Dressur</h3>
+            <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
+            <a href="dressur.html" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
-        </div>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
 
-        <div class="box">
-          <h3>Platzhalter</h3>
-          <p>Kurze Beschreibung des Bereichs.</p>
-          <a href="#" class="btn">Öffnen</a>
+          <div class="box">
+            <h3>Platzhalter</h3>
+            <p>Kurze Beschreibung des Bereichs.</p>
+            <a href="#" class="btn">Öffnen</a>
+          </div>
         </div>
-      </div>
       </div>
 
       <!-- Footer -->
@@ -333,5 +464,247 @@
       </footer>
     </main>
   </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
+      authDomain: "trackers-ce3fb.firebaseapp.com",
+      projectId: "trackers-ce3fb",
+      storageBucket: "trackers-ce3fb.firebasestorage.app",
+      messagingSenderId: "385800199430",
+      appId: "1:385800199430:web:93fe876ed4dfc6550a9287",
+      measurementId: "G-VXYWY0ELKF"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // DOM Elements
+    const loadingState = document.getElementById('loadingState');
+    const mainContent = document.getElementById('mainContent');
+    const profileImage = document.getElementById('profileImage');
+    const imageUpload = document.getElementById('imageUpload');
+    const profileName = document.getElementById('profileName');
+    const statusDisplay = document.getElementById('statusDisplay');
+    const statusInput = document.getElementById('statusInput');
+    const statusContainer = document.getElementById('statusContainer');
+    const bioDisplay = document.getElementById('bioDisplay');
+    const bioInput = document.getElementById('bioInput');
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // State
+    let editMode = false;
+    let currentUser = null;
+    let userDocId = null;
+    let originalData = {};
+
+    // Check Login
+    const username = localStorage.getItem('clubUser');
+    if (!username) {
+      window.location.href = 'index.html';
+    }
+
+    // Load User Data
+    async function loadUserData() {
+      try {
+        const snap = await db.collection('users')
+          .where('username', '==', username)
+          .limit(1)
+          .get();
+
+        if (snap.empty) {
+          alert('User nicht gefunden!');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const doc = snap.docs[0];
+        userDocId = doc.id;
+        currentUser = doc.data();
+
+        // Store original data
+        originalData = {
+          status: currentUser.status || 'Online',
+          bio: currentUser.bio || 'Noch keine Bio vorhanden.',
+          profileImage: currentUser.profileImage || null
+        };
+
+        // Display data
+        displayUserData();
+        
+        loadingState.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+
+      } catch (error) {
+        console.error('Fehler beim Laden:', error);
+        alert('Fehler beim Laden der Daten!');
+      }
+    }
+
+    // Display User Data
+    function displayUserData() {
+      profileName.textContent = currentUser.username || 'Unbekannt';
+      
+      // Status
+      const status = currentUser.status || 'Online';
+      statusDisplay.textContent = `Status: ${status}`;
+      statusInput.value = status;
+
+      // Bio
+      const bio = currentUser.bio || 'Noch keine Bio vorhanden.';
+      bioDisplay.textContent = bio;
+      bioInput.value = bio;
+
+      // Profile Image
+      if (currentUser.profileImage) {
+        profileImage.innerHTML = `<img src="${currentUser.profileImage}" alt="Profilbild">`;
+      } else {
+        profileImage.innerHTML = '<span>Kein Profilbild</span>';
+      }
+    }
+
+    // Toggle Edit Mode
+    function toggleEditMode(enable) {
+      editMode = enable;
+
+      if (enable) {
+        // Edit Mode aktivieren
+        statusDisplay.classList.add('hidden');
+        statusInput.classList.remove('hidden');
+        bioDisplay.classList.add('hidden');
+        bioInput.classList.remove('hidden');
+        profileImage.classList.add('clickable');
+        
+        editBtn.classList.add('hidden');
+        saveBtn.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+      } else {
+        // Edit Mode deaktivieren
+        statusDisplay.classList.remove('hidden');
+        statusInput.classList.add('hidden');
+        bioDisplay.classList.remove('hidden');
+        bioInput.classList.add('hidden');
+        profileImage.classList.remove('clickable');
+        
+        editBtn.classList.remove('hidden');
+        saveBtn.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+      }
+    }
+
+    // Handle Image Upload
+    profileImage.addEventListener('click', () => {
+      if (editMode) {
+        imageUpload.click();
+      }
+    });
+
+    imageUpload.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Bitte nur Bilder hochladen!');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Bild ist zu groß! Max. 5MB erlaubt.');
+        return;
+      }
+
+      try {
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profileImage.innerHTML = `<img src="${e.target.result}" alt="Profilbild">`;
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to Firebase Storage
+        const storageRef = storage.ref(`profile-images/${username}-${Date.now()}`);
+        await storageRef.put(file);
+        const downloadURL = await storageRef.getDownloadURL();
+
+        // Update Firestore
+        await db.collection('users').doc(userDocId).update({
+          profileImage: downloadURL
+        });
+
+        currentUser.profileImage = downloadURL;
+        alert('Profilbild erfolgreich hochgeladen!');
+
+      } catch (error) {
+        console.error('Upload Fehler:', error);
+        alert('Fehler beim Hochladen des Bildes!');
+      }
+    });
+
+    // Save Changes
+    saveBtn.addEventListener('click', async () => {
+      try {
+        const newStatus = statusInput.value.trim();
+        const newBio = bioInput.value.trim();
+
+        if (!newStatus) {
+          alert('Status darf nicht leer sein!');
+          return;
+        }
+
+        await db.collection('users').doc(userDocId).update({
+          status: newStatus,
+          bio: newBio
+        });
+
+        currentUser.status = newStatus;
+        currentUser.bio = newBio;
+        originalData.status = newStatus;
+        originalData.bio = newBio;
+
+        displayUserData();
+        toggleEditMode(false);
+        alert('Änderungen gespeichert!');
+
+      } catch (error) {
+        console.error('Speichern Fehler:', error);
+        alert('Fehler beim Speichern!');
+      }
+    });
+
+    // Cancel Edit
+    cancelBtn.addEventListener('click', () => {
+      statusInput.value = originalData.status;
+      bioInput.value = originalData.bio;
+      toggleEditMode(false);
+    });
+
+    // Edit Button
+    editBtn.addEventListener('click', () => {
+      toggleEditMode(true);
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('clubUser');
+      localStorage.removeItem('clubRole');
+      window.location.href = 'index.html';
+    });
+
+    // Load data on page load
+    loadUserData();
+  </script>
 </body>
 </html>
