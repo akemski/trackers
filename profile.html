@@ -6,7 +6,152 @@
   <title>Dark Trackers • Mein Profil</title>
 
   <style>
-    /* Dein CSS für das Profil-Dashboard (wie bereits beschrieben) bleibt unverändert */
+    :root{
+      --bg0:#050505;
+      --bg1:#0b0b10;
+      --panel:#101018;
+      --panel2:#0e0e16;
+      --line:#242436;
+      --line2:#2b2b44;
+      --text:#ececf4;
+      --muted:#b8b8d2;
+
+      --red:#c53f3f;
+      --red2:#ff3b3b;
+
+      --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 8px;
+      --border-color: rgba(37,37,55,.7);
+      --border-hover: rgba(209,42,61,.45);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: 'Courier New', Courier, monospace;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
+        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      overflow: hidden;
+      font-size: 14px;
+    }
+
+    .wrap{
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 32px 16px 60px;
+      position: relative;
+      color: #ccc;
+    }
+
+    /* Header für das Profil */
+    .header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .header .user-info {
+      flex: 1;
+    }
+
+    .header .user-info h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .header .status {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Kartenbereich für die Profilbereiche */
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .box {
+      background: linear-gradient(180deg, rgba(14,14,22,.92), rgba(10,10,16,.92));
+      border: 1px solid rgba(36,36,54,.9);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .box h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .box p {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 10px 0;
+    }
+
+    .box .btn {
+      display: inline-block;
+      background-color: var(--red);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .box .btn:hover {
+      background-color: var(--red2);
+    }
+
+    /* Bio-Bereich */
+    .bio-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: rgba(16,16,24,.95);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+    }
+
+    .bio-section h2 {
+      margin-top: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .bio-section p {
+      font-size: 16px;
+      color: var(--muted);
+      margin: 10px 0;
+    }
+
+    /* Responsive Anpassungen */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
   </style>
 </head>
 
@@ -23,7 +168,6 @@
 
     <!-- Kartenbereich für die verschiedenen Bereiche -->
     <div class="grid">
-      <!-- Deine Karten wie "Member Liste", "Forum", etc. -->
       <div class="box">
         <h3>Member Liste</h3>
         <p>Hier findest du die Liste der Mitglieder des Dark Trackers Clubs.</p>
@@ -34,7 +178,27 @@
         <p>Diskutiere mit anderen über die neuesten Themen!</p>
         <a href="forum.html" class="btn">Öffnen</a>
       </div>
+      <div class="box">
+        <h3>Dressur</h3>
+        <p>Trainiere deine Skills und verbessere deine Dressurfähigkeiten.</p>
+        <a href="dressur.html" class="btn">Öffnen</a>
+      </div>
       <!-- Weitere Karten hinzufügen -->
+      <div class="box">
+        <h3>Platzhalter</h3>
+        <p>Beschreibung des Bereichs.</p>
+        <a href="#" class="btn">Öffnen</a>
+      </div>
+      <div class="box">
+        <h3>Platzhalter</h3>
+        <p>Beschreibung des Bereichs.</p>
+        <a href="#" class="btn">Öffnen</a>
+      </div>
+      <div class="box">
+        <h3>Platzhalter</h3>
+        <p>Beschreibung des Bereichs.</p>
+        <a href="#" class="btn">Öffnen</a>
+      </div>
     </div>
 
     <!-- Bio-Bereich -->
