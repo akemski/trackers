@@ -7,7 +7,7 @@
 
   <style>
     :root{
-      --bg0:#07070a;
+      --bg0:#050505;
       --bg1:#0b0b10;
       --panel:#101018;
       --panel2:#0e0e16;
@@ -16,65 +16,62 @@
       --text:#ececf4;
       --muted:#b8b8d2;
 
-      --red:#b0162a;
-      --red2:#d12a3d;
+      --red:#c53f3f;
+      --red2:#ff3b3b;
 
-      --glow: 0 0 0 1px rgba(209,42,61,.25), 0 0 40px rgba(176,22,42,.10);
-      --shadow: 0 14px 50px rgba(0,0,0,.55);
-      --radius: 18px;
+      --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 16px;
+      --border-color: rgba(37,37,55,.7);
+      --border-hover: rgba(209,42,61,.45);
     }
 
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: 'Courier New', Courier, monospace;
       color:var(--text);
       background:
-        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.22), transparent 55%),
-        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.12), transparent 55%),
+        radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
+        radial-gradient(700px 500px at 90% 20%, rgba(209,42,61,.1), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       min-height:100vh;
+      overflow: hidden;
+      font-size: 14px;
     }
 
     .wrap{
-      max-width: 1040px;
+      max-width: 1024px;
       margin: 0 auto;
-      padding: 34px 16px 60px;
+      padding: 32px 16px 60px;
       position: relative;
+      color: #ccc;
     }
 
-    /* subtle grid overlay */
-    .wrap:before{
-      content:"";
-      position:absolute;
-      inset: 0 0 auto 0;
-      height: 520px;
-      pointer-events:none;
-      background-image:
-        linear-gradient(to right, rgba(255,255,255,.04) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 70px 70px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), transparent);
-      opacity:.35;
+    /* Glitch Effect for Logo */
+    h1{
+      font-size: 36px;
+      font-family: 'Courier New', Courier, monospace;
+      text-transform: uppercase;
+      text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b;
+      animation: glitch 1s infinite linear;
+    }
+
+    @keyframes glitch {
+      0% { text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b; }
+      50% { text-shadow: -5px -5px 5px #ff3b3b, 5px 5px 10px #c53f3f; }
+      100% { text-shadow: 0 0 5px #ff3b3b, 0 0 10px #c53f3f, 0 0 15px #ff3b3b; }
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(16,16,24,.92), rgba(10,10,16,.92));
-      border: 1px solid rgba(36,36,54,.9);
+      background: linear-gradient(180deg, rgba(16,16,24,.95), rgba(12,12,16,.95));
+      border: 1px solid rgba(43,43,68,.9);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 22px;
       position: relative;
-      overflow:hidden;
-    }
-
-    .card:before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius: calc(var(--radius) + 2px);
-      background: radial-gradient(800px 220px at 10% 0%, rgba(209,42,61,.16), transparent 65%);
-      pointer-events:none;
+      overflow: hidden;
+      background-image: url('https://www.transparenttextures.com/patterns/dark-mesh.png');
     }
 
     .titlebar{
@@ -87,23 +84,11 @@
       z-index: 1;
     }
 
-    h1,h2,h3{ margin:0; letter-spacing:.2px; }
-    h1{ font-size: 28px; }
-    h2{ font-size: 22px; }
-    h3{ font-size: 18px; }
-
+    h2,h3{ margin:0; }
     .muted{
       color: var(--muted);
-      font-size: 14px;
+      font-size: 12px;
       line-height: 1.35;
-    }
-
-    .tagline{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-top: 8px;
-      flex-wrap: wrap;
     }
 
     .badge{
@@ -112,16 +97,25 @@
       gap: 8px;
       padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(12,12,18,.8);
+      background: rgba(14,14,22,.85);
       border: 1px solid rgba(43,43,68,.9);
       color:#d9d9ff;
       font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
       backdrop-filter: blur(6px);
     }
 
     .badge.red{
       border-color: rgba(209,42,61,.45);
       box-shadow: var(--glow);
+    }
+
+    .divider{
+      height:1px;
+      background: rgba(43,43,68,.75);
+      margin: 14px 0;
     }
 
     label{ display:block; margin-top: 12px; }
@@ -156,21 +150,19 @@
       font-weight: 650;
       letter-spacing: .2px;
       transition: transform .12s ease, filter .12s ease;
-    }
-    button:active{ transform: translateY(1px); }
-
-    .btn{
-      background: linear-gradient(180deg, var(--red2), var(--red));
+      background: var(--red);
       color: #fff;
       box-shadow: var(--glow);
     }
-    .btn:hover{ filter: brightness(1.06); }
+
+    button:active{ transform: translateY(1px); }
 
     .btn2{
       background: rgba(26,26,40,.95);
       color: #fff;
       border: 1px solid rgba(43,43,68,.9);
     }
+
     .btn2:hover{ filter: brightness(1.08); }
 
     .err{
@@ -187,8 +179,6 @@
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 16px;
       margin-top: 16px;
-      position: relative;
-      z-index: 1;
     }
 
     .box{
@@ -209,18 +199,9 @@
       opacity:.9;
     }
 
-    .box > *{ position:relative; z-index: 1; }
-    .box p{ margin: 6px 0 12px; }
-
     .box .btn{
       width: 100%;
       justify-content:center;
-    }
-
-    .divider{
-      height:1px;
-      background: rgba(43,43,68,.75);
-      margin: 14px 0;
     }
 
     .footer-note{
@@ -230,6 +211,7 @@
       letter-spacing: .3px;
       text-transform: uppercase;
     }
+
   </style>
 </head>
 
@@ -252,7 +234,7 @@
 
       <div class="divider"></div>
 
-      <form id="loginForm" style="position:relative; z-index:1;">
+      <form id="loginForm">
         <label class="muted" for="username">Username</label>
         <input id="username" required placeholder="z.B. marie" autocomplete="username" />
 
@@ -272,16 +254,10 @@
       <div class="titlebar">
         <div>
           <h2>Operations Hub</h2>
-          <p class="muted" style="margin:6px 0 0;">
-            Zugriff auf interne Bereiche – handle entsprechend deiner Clearance.
-          </p>
-          <div class="tagline">
-            <span class="badge">Dark Trackers Network</span>
-            <span class="badge">Cover: “—”</span>
-          </div>
+          <p class="muted">Zugang zu internen Bereichen – handle entsprechend deiner Clearance.</p>
         </div>
 
-        <div class="row" style="margin-top: 0;">
+        <div class="row">
           <span class="badge" id="userPill">👤 —</span>
           <span class="badge red" id="rolePill">🔑 —</span>
           <button class="btn2" id="logoutBtn" type="button">Logout</button>
@@ -307,7 +283,7 @@
           <button class="btn" onclick="location.href='comms.html'">Öffnen</button>
         </div>
 
-        <!-- Instructor-only (oder höher) -->
+        <!-- Instructor-only -->
         <div class="box" id="instructBox">
           <h3>Instruction</h3>
           <p class="muted">Trainings, Aufgaben, Bewertungen.</p>
@@ -329,134 +305,15 @@
         </div>
       </div>
 
-      <div class="footer-note" style="position:relative; z-index:1; margin-top: 16px;">
+      <div class="footer-note" style="margin-top: 16px;">
         all actions logged • protocol DT-01 • compartmentalized access
       </div>
     </section>
 
   </div>
 
-  <!-- Firebase (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-  <script>
-    // ✅ Firebase Config eintragen
-    const firebaseConfig = {
-      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
-      authDomain: "trackers-ce3fb.firebaseapp.com",
-      projectId: "trackers-ce3fb"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // DOM
-    const loginPage = document.getElementById("loginPage");
-    const dashPage = document.getElementById("dashPage");
-    const loginForm = document.getElementById("loginForm");
-    const loginError = document.getElementById("loginError");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    const userPill = document.getElementById("userPill");
-    const rolePill = document.getElementById("rolePill");
-
-    const instructBox = document.getElementById("instructBox");
-    const leaderBox = document.getElementById("leaderBox");
-    const adminBox = document.getElementById("adminBox");
-
-    // Rollen-Hierarchie
-    const roleRank = { member: 1, instruct: 2, leader: 3, admin: 4 };
-
-    function normalizeRole(role) {
-      const r = (role || "").toLowerCase().trim();
-      return roleRank[r] ? r : "member";
-    }
-
-    function applyRoleUI(role) {
-      const r = normalizeRole(role);
-
-      // default verstecken
-      instructBox.classList.add("hidden");
-      leaderBox.classList.add("hidden");
-      adminBox.classList.add("hidden");
-
-      if (roleRank[r] >= roleRank.instruct) instructBox.classList.remove("hidden");
-      if (roleRank[r] >= roleRank.leader) leaderBox.classList.remove("hidden");
-      if (r === "admin") adminBox.classList.remove("hidden");
-
-      rolePill.textContent = "🔑 " + r;
-    }
-
-    function showDash(username, role) {
-      loginPage.classList.add("hidden");
-      dashPage.classList.remove("hidden");
-      userPill.textContent = "👤 " + (username || "—");
-      applyRoleUI(role);
-    }
-
-    function showLogin() {
-      dashPage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
-      userPill.textContent = "👤 —";
-      rolePill.textContent = "🔑 —";
-    }
-
-    // Login: Username + Passwort aus Firestore checken → dann Anonymous Auth
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      loginError.style.display = "none";
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-
-      try {
-        const snap = await db
-          .collection("users")
-          .where("username", "==", username)
-          .limit(1)
-          .get();
-
-        if (snap.empty) throw new Error("User nicht gefunden");
-
-        const data = snap.docs[0].data();
-        if ((data.password || "") !== password) throw new Error("Falsches Passwort");
-
-        const role = normalizeRole(data.role);
-
-        localStorage.setItem("clubUser", username);
-        localStorage.setItem("clubRole", role);
-
-        await auth.signInAnonymously();
-        showDash(username, role);
-
-      } catch (err) {
-        console.error(err);
-        loginError.style.display = "block";
-        loginError.textContent = "Login fehlgeschlagen 🥲";
-      }
-    });
-
-    // Session check
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        const username = localStorage.getItem("clubUser");
-        const role = localStorage.getItem("clubRole");
-        showDash(username, role);
-      } else {
-        localStorage.removeItem("clubUser");
-        localStorage.removeItem("clubRole");
-        showLogin();
-      }
-    });
-
-    // Logout
-    logoutBtn.addEventListener("click", async () => {
-      await auth.signOut();
-    });
-  </script>
 </body>
 </html>
-
