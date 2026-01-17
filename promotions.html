@@ -604,7 +604,7 @@
         displayRanksOverview(points);
 
         // Show admin panel if admin
-        if (isAdmin) {
+        if (userIsAdmin) {
           adminPanel.classList.remove('hidden');
           await loadAllMembers();
         }
@@ -646,7 +646,7 @@
     // Award Points (Admin only)
     awardPointsBtn.addEventListener('click', async () => {
       // Double-check admin status
-      if (!isAdmin) {
+      if (!userIsAdmin) {
         alert('⛔ Keine Berechtigung! Nur Admins können Punkte vergeben.');
         return;
       }
