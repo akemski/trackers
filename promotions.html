@@ -495,6 +495,7 @@
     }
 
     const isAdmin = normalizeRole(role) === 'admin';
+    const isLeader = normalizeRole(role) === 'leader';
 
     // Get Current Rank
     function getCurrentRank(points) {
@@ -517,6 +518,21 @@
 
     // Update Progress Display
     function updateProgressDisplay(points) {
+      // Special view for Leaders (Vicar rank)
+      if (isLeader) {
+        currentRankName.textContent = 'VICAR';
+        currentPoints.textContent = points;
+        
+        // Hide progress bar for leaders
+        progressContainer.innerHTML = `
+          <div style="text-align: center; padding: 20px; color: var(--red2); font-weight: 700; font-size: 16px;">
+            Als Leader hast du den festen Rang VICAR.
+          </div>
+        `;
+        return;
+      }
+
+      // Normal member progression
       const rank = getCurrentRank(points);
       const nextRank = getNextRank(rank);
 
@@ -547,6 +563,18 @@
     function displayRanksOverview(userPoints) {
       ranksOverview.innerHTML = '';
       
+      // Leaders don't see the ranks overview
+      if (isLeader) {
+        ranksOverview.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--muted); grid-column: 1 / -1;">
+            <p style="font-size: 16px; margin-bottom: 10px;">Als VICAR verwaltest du das Team.</p>
+            <p style="font-size: 14px;">Deine Punkte werden für Statistiken erfasst.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Normal member view
       RANKS.forEach((rank, index) => {
         const card = document.createElement('div');
         card.className = 'rank-card';
