@@ -299,7 +299,6 @@
 
     .admin-btn:hover {
       background: var(--red2);
-      border-color: var(--red2);
     }
 
     .admin-btn.secondary {
@@ -334,10 +333,6 @@
         font-size: 28px;
       }
 
-      .ranks-overview {
-        grid-template-columns: 1fr;
-      }
-
       .admin-actions {
         flex-direction: column;
       }
@@ -349,22 +344,22 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <h1>Promotions</h1>
+      <h1>Promotion System</h1>
       <a href="profile.html" class="back-btn">← Zurück zum Profil</a>
     </header>
 
     <!-- Loading State -->
     <div class="loading" id="loadingState">
-      Lade Daten...
+      Lade Promotion-Daten...
     </div>
 
     <!-- Main Content -->
     <div class="content hidden" id="mainContent">
-      <!-- Progress Section -->
+      <!-- User Progress Section -->
       <section class="progress-section">
         <div class="current-rank">
-          <h2>Aktueller Rang</h2>
-          <div class="rank-name" id="currentRankName">SHARD</div>
+          <h2>Dein aktueller Rang:</h2>
+          <div class="rank-name" id="currentRankName">-</div>
           <div class="points-display">
             <span class="current-points" id="currentPoints">0</span> Punkte
           </div>
@@ -374,10 +369,10 @@
         <div class="progress-bar-container" id="progressContainer">
           <div class="progress-info">
             <span id="progressFrom">0 Punkte</span>
-            <span id="progressTo">500 Punkte bis Initiate</span>
+            <span id="progressTo">500 Punkte bis INITIATE</span>
           </div>
           <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%;">
+            <div class="progress-fill" id="progressFill" style="width: 0%">
               <span id="progressPercent">0%</span>
             </div>
           </div>
@@ -385,13 +380,13 @@
 
         <!-- Ranks Overview -->
         <div class="ranks-overview" id="ranksOverview">
-          <!-- Ranks will be loaded here -->
+          <!-- Will be populated by JavaScript -->
         </div>
       </section>
 
-      <!-- Admin Panel (nur für Admins) -->
+      <!-- Admin Panel -->
       <section class="admin-panel hidden" id="adminPanel">
-        <h2>🔐 Admin: Punkte Vergeben</h2>
+        <h2>⚙️ Admin Panel - Punkte vergeben</h2>
         
         <div class="admin-controls">
           <div class="form-group">
@@ -402,7 +397,7 @@
           </div>
 
           <div class="form-group">
-            <label for="pointsAmount">Punkte (+/-)</label>
+            <label for="pointsAmount">Punkte (+ oder -):</label>
             <input 
               type="number" 
               id="pointsAmount" 
@@ -454,7 +449,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // RANKS configuration and other constants
+    // RANKS configuration
     const RANKS = [
       { name: 'SHARD', points: 0 },
       { name: 'INITIATE', points: 500 },
@@ -484,7 +479,6 @@
     let currentUser = null;
     let currentUserDoc = null;
     let allMembers = [];
-    let isAdmin = false;
 
     // Check Login
     const username = localStorage.getItem('clubUser');
@@ -532,12 +526,12 @@
       if (nextRank) {
         const pointsInCurrentRank = points - rank.points;
         const pointsNeededForNext = nextRank.points - rank.points;
-        const progressPercent = (pointsInCurrentRank / pointsNeededForNext) * 100;
+        const progressPercentValue = (pointsInCurrentRank / pointsNeededForNext) * 100;
 
         progressFrom.textContent = `${rank.points} Punkte`;
         progressTo.textContent = `${nextRank.points} Punkte bis ${nextRank.name}`;
-        progressFill.style.width = `${progressPercent}%`;
-        progressFill.querySelector('span').textContent = `${Math.round(progressPercent)}%`;
+        progressFill.style.width = `${progressPercentValue}%`;
+        progressFill.querySelector('span').textContent = `${Math.round(progressPercentValue)}%`;
         progressContainer.classList.remove('hidden');
       } else {
         // Max rank reached
@@ -604,7 +598,7 @@
         displayRanksOverview(points);
 
         // Show admin panel if admin
-        if (userIsAdmin) {
+        if (isAdmin) {
           adminPanel.classList.remove('hidden');
           await loadAllMembers();
         }
@@ -646,7 +640,7 @@
     // Award Points (Admin only)
     awardPointsBtn.addEventListener('click', async () => {
       // Double-check admin status
-      if (!userIsAdmin) {
+      if (!isAdmin) {
         alert('⛔ Keine Berechtigung! Nur Admins können Punkte vergeben.');
         return;
       }
@@ -668,14 +662,14 @@
       try {
         const memberDoc = await db.collection('users').doc(memberId).get();
         const memberData = memberDoc.data();
-        const currentPoints = memberData.promotionPoints || 0;
-        const newPoints = Math.max(0, currentPoints + points);
+        const currentPointsValue = memberData.promotionPoints || 0;
+        const newPoints = Math.max(0, currentPointsValue + points);
 
         await db.collection('users').doc(memberId).update({
           promotionPoints: newPoints
         });
 
-        alert(`${points > 0 ? '+' : ''}${points} Punkte erfolgreich vergeben!\n${memberData.displayName || memberData.username}: ${currentPoints} → ${newPoints} Punkte`);
+        alert(`${points > 0 ? '+' : ''}${points} Punkte erfolgreich vergeben!\n${memberData.displayName || memberData.username}: ${currentPointsValue} → ${newPoints} Punkte`);
 
         // Reset form
         pointsAmount.value = '50';
