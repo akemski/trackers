@@ -482,7 +482,7 @@
 
     // Check Login
     const username = localStorage.getItem('clubUser');
-    let role = localStorage.getItem('clubRole'); // Initial role from localStorage
+    const role = localStorage.getItem('clubRole'); // admin or member
     
     if (!username) {
       window.location.href = 'index.html';
@@ -491,13 +491,17 @@
     // Normalize role
     function normalizeRole(r) {
       const normalized = (r || "").toLowerCase().trim();
-      if (normalized === "admin") return "admin";
-      if (normalized === "leader") return "leader";
-      return normalized;
+      return normalized === "admin" ? "admin" : "member";
     }
 
-    let isAdmin = false;
-    let isLeader = false;
+    // Check if rank is a leader rank (Guide, Vicar, Proxy)
+    function isLeaderRank(rank) {
+      const normalized = (rank || "").toLowerCase().trim();
+      return normalized === 'guide' || normalized === 'vicar' || normalized === 'proxy';
+    }
+
+    let isAdmin = normalizeRole(role) === 'admin';
+    let isLeader = false; // Will be set after loading user data
 
     // Get Current Rank
     function getCurrentRank(points) {
@@ -519,16 +523,18 @@
     }
 
     // Update Progress Display
-    function updateProgressDisplay(points) {
-      // Special view for Leaders (Vicar rank)
+    function updateProgressDisplay(points, userRank) {
+      // Special view for Leaders (Guide, Vicar, Proxy ranks)
       if (isLeader) {
-        currentRankName.textContent = 'VICAR';
+        // Display their actual rank in uppercase
+        const rankDisplay = (userRank || 'LEADER').toUpperCase();
+        currentRankName.textContent = rankDisplay;
         currentPoints.textContent = points;
         
         // Hide progress bar for leaders
         progressContainer.innerHTML = `
           <div style="text-align: center; padding: 20px; color: var(--red2); font-weight: 700; font-size: 16px;">
-            Als Leader hast du den festen Rang VICAR.
+            Als ${rankDisplay} hast du einen festen Leadership-Rang.
           </div>
         `;
         return;
@@ -569,7 +575,7 @@
       if (isLeader) {
         ranksOverview.innerHTML = `
           <div style="text-align: center; padding: 40px; color: var(--muted); grid-column: 1 / -1;">
-            <p style="font-size: 16px; margin-bottom: 10px;">Als VICAR verwaltest du das Team.</p>
+            <p style="font-size: 16px; margin-bottom: 10px;">Als Leadership-Mitglied verwaltest du das Team.</p>
             <p style="font-size: 14px;">Deine Punkte werden für Statistiken erfasst.</p>
           </div>
         `;
@@ -622,22 +628,17 @@
         currentUserDoc = doc.id;
         currentUser = doc.data();
 
-        // Get role/rank from database - check both 'role' and 'rank' fields
-        const userRole = currentUser.role || currentUser.rank || role || '';
-        const normalizedRole = normalizeRole(userRole);
-        
-        // Update isAdmin and isLeader based on actual data
-        isAdmin = normalizedRole === 'admin';
-        isLeader = normalizedRole === 'leader';
+        // Check if user has a leader rank (Guide, Vicar, Proxy)
+        const userRank = currentUser.rank || '';
+        isLeader = isLeaderRank(userRank);
 
-        console.log('User role from DB:', userRole);
-        console.log('Normalized role:', normalizedRole);
-        console.log('isLeader:', isLeader);
-        console.log('isAdmin:', isAdmin);
+        console.log('User rank from DB:', userRank);
+        console.log('Is leader rank:', isLeader);
+        console.log('Is admin:', isAdmin);
 
         const points = currentUser.promotionPoints || 0;
 
-        updateProgressDisplay(points);
+        updateProgressDisplay(points, userRank);
         displayRanksOverview(points);
 
         // Show admin panel if admin
