@@ -13,8 +13,7 @@
       --primary: #ff3b3b;
       --primary-dark: #a82828;
       --primary-glow: rgba(255, 59, 59, 0.3);
-      --line: #ff3b3b;
-      --text: #ff3b3b;
+      --text: #ff6b6b;
       --text-dark: #a82828;
       --text-light: #ffcccc;
       --muted: #b8b8d2;
@@ -80,186 +79,151 @@
 
     /* Main ID Card Container */
     .id-card {
-      background: #000;
-      border: 3px solid var(--primary);
+      background: 
+        linear-gradient(to right, rgba(255, 59, 59, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 59, 59, 0.05) 1px, transparent 1px),
+        #000;
+      background-size: 20px 20px;
+      border: 4px solid var(--primary);
       box-shadow: 
-        0 0 20px var(--primary-glow),
-        inset 0 0 30px rgba(255, 59, 59, 0.05);
-      padding: 0;
+        0 0 30px var(--primary-glow),
+        inset 0 0 50px rgba(255, 59, 59, 0.05);
       position: relative;
       overflow: hidden;
     }
 
-    /* Header Section */
+    /* Corner decorations */
+    .id-card::before,
+    .id-card::after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border: 3px solid var(--primary);
+      z-index: 1;
+    }
+
+    .id-card::before {
+      top: 15px;
+      left: 15px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .id-card::after {
+      bottom: 15px;
+      right: 15px;
+      border-left: none;
+      border-top: none;
+    }
+
+    /* Header */
     .card-header {
-      background: linear-gradient(90deg, rgba(255, 59, 59, 0.15), rgba(255, 59, 59, 0.05));
-      border-bottom: 2px solid var(--primary);
-      padding: 30px 40px;
-      text-align: center;
+      background: linear-gradient(90deg, rgba(255, 59, 59, 0.2), rgba(255, 59, 59, 0.05));
+      border-bottom: 3px solid var(--primary);
+      padding: 30px 50px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
     }
 
-    .card-header .subtitle {
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: var(--text-dark);
-      text-transform: uppercase;
-      margin-bottom: 5px;
+    .card-header .logo {
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #000;
+      font-size: 28px;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--primary-glow);
     }
 
-    .card-header h1 {
-      font-size: 42px;
+    .card-header .header-text h1 {
+      font-size: 32px;
       font-weight: 700;
-      letter-spacing: 12px;
+      letter-spacing: 8px;
       text-transform: uppercase;
       color: var(--primary);
       text-shadow: 0 0 15px var(--primary-glow);
       margin-bottom: 5px;
     }
 
-    .card-header .tagline {
-      font-size: 13px;
-      letter-spacing: 4px;
+    .card-header .header-text .subtitle {
+      font-size: 11px;
+      letter-spacing: 3px;
       color: var(--text-dark);
       text-transform: uppercase;
     }
 
-    .card-header .operative-type {
-      font-size: 12px;
-      letter-spacing: 3px;
-      color: var(--text-light);
-      text-transform: uppercase;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--primary-dark);
-    }
-
-    /* Main Content Layout */
+    /* Main Layout */
     .card-content {
       display: grid;
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 350px 1fr 500px;
       padding: 40px;
-      gap: 40px;
+      gap: 30px;
+      position: relative;
+      z-index: 2;
     }
 
-    /* Left Section - Info Grid */
+    /* Left Section - Stats & Image */
     .left-section {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 25px;
     }
 
-    .info-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .info-row.single {
-      grid-template-columns: 1fr;
-    }
-
-    .info-box {
-      background: rgba(255, 59, 59, 0.03);
-      border: 2px solid var(--primary-dark);
-      padding: 15px 20px;
-      position: relative;
-    }
-
-    .info-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), transparent);
-    }
-
-    .info-box label {
-      display: block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dark);
-      margin-bottom: 8px;
-    }
-
-    .info-box .value {
+    .stats-label {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      padding: 12px 20px;
       font-size: 16px;
-      color: var(--text);
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-
-    .info-box .value.large {
-      font-size: 24px;
       font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .info-box.bio {
-      grid-column: 1 / -1;
-    }
-
-    .info-box.bio .value {
-      font-size: 14px;
-      color: var(--text-light);
-      line-height: 1.8;
-    }
-
-    /* Rank Badge */
-    .rank-badge {
-      display: inline-block;
-      background: var(--primary);
-      color: #000;
-      padding: 8px 20px;
-      font-weight: 900;
-      font-size: 20px;
       letter-spacing: 3px;
       text-transform: uppercase;
-      box-shadow: 0 0 15px var(--primary-glow);
-      border: 2px solid var(--primary);
+      color: #000;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
     }
 
-    .rank-badge.leader {
-      background: #d4af37;
-      border-color: #d4af37;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    .stats-box {
+      background: rgba(255, 59, 59, 0.05);
+      border: 3px solid var(--primary-dark);
+      padding: 20px;
+      flex: 1;
     }
 
-    .rank-badge.admin {
-      background: #8b0000;
-      border-color: #ff0000;
-      color: #fff;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    .stat-item {
+      padding: 15px 0;
+      border-bottom: 2px solid rgba(255, 59, 59, 0.2);
+      font-size: 14px;
     }
 
-    /* Clearance Badge */
-    .clearance-badge {
-      display: inline-block;
-      background: rgba(255, 59, 59, 0.2);
-      border: 2px solid var(--primary);
-      color: var(--primary);
-      padding: 6px 16px;
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: 2px;
+    .stat-item:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: var(--text-dark);
       text-transform: uppercase;
-      box-shadow: 0 0 10px var(--primary-glow);
+      letter-spacing: 2px;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 5px;
     }
 
-    /* Right Section - Profile Image */
-    .right-section {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .stat-value {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
     }
 
     .profile-image-container {
       width: 100%;
-      height: 400px;
+      height: 350px;
       border: 3px solid var(--primary);
       background: rgba(255, 59, 59, 0.05);
       overflow: hidden;
@@ -282,106 +246,180 @@
       letter-spacing: 2px;
     }
 
-    /* Tech Lines Decoration */
-    .tech-lines {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      width: 150px;
-      height: 150px;
-      opacity: 0.3;
+    /* Middle Section - Info */
+    .middle-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .tech-lines::before,
-    .tech-lines::after {
+    .info-box {
+      background: rgba(255, 59, 59, 0.05);
+      border: 3px solid var(--primary-dark);
+      padding: 20px;
+      position: relative;
+    }
+
+    .info-box::before {
       content: '';
       position: absolute;
-      background: var(--primary);
-    }
-
-    .tech-lines::before {
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 2px;
-      bottom: 0;
-      right: 0;
-      box-shadow: 0 0 5px var(--primary-glow);
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), transparent);
     }
 
-    .tech-lines::after {
-      width: 2px;
-      height: 100%;
-      bottom: 0;
-      right: 0;
-      box-shadow: 0 0 5px var(--primary-glow);
-    }
-
-    /* Stats Section */
-    .stats-section {
-      background: rgba(255, 59, 59, 0.05);
-      border: 2px solid var(--primary-dark);
-      padding: 20px;
-    }
-
-    .stats-section h3 {
-      font-size: 12px;
+    .info-box label {
+      display: block;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--text-dark);
-      margin-bottom: 15px;
+      margin-bottom: 8px;
     }
 
-    .stat-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 59, 59, 0.2);
-      font-size: 13px;
-    }
-
-    .stat-item:last-child {
-      border-bottom: none;
-    }
-
-    .stat-label {
-      color: var(--text-dark);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 11px;
-    }
-
-    .stat-value {
+    .info-box .value {
+      font-size: 16px;
       color: var(--text);
+      line-height: 1.6;
+    }
+
+    .info-box .value.large {
+      font-size: 22px;
       font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .abilities-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .abilities-list li {
+      padding: 8px 0;
+      padding-left: 20px;
+      position: relative;
       font-size: 14px;
+      color: var(--text);
+    }
+
+    .abilities-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    /* Right Section - Large Image */
+    .right-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .large-image-container {
+      width: 100%;
+      height: 100%;
+      min-height: 500px;
+      border: 4px solid var(--primary);
+      background: rgba(255, 59, 59, 0.05);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 
+        inset 0 0 30px rgba(255, 59, 59, 0.1),
+        0 0 20px var(--primary-glow);
+    }
+
+    .large-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .large-image-container.no-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dark);
+      font-size: 18px;
+      letter-spacing: 3px;
+    }
+
+    /* Rank Badge */
+    .rank-badge {
+      display: inline-block;
+      background: var(--primary);
+      color: #000;
+      padding: 8px 20px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      box-shadow: 0 0 15px var(--primary-glow);
+      border: 2px solid var(--primary);
+    }
+
+    .rank-badge.leader {
+      background: #d4af37;
+      border-color: #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    }
+
+    .rank-badge.admin {
+      background: #8b0000;
+      border-color: #ff0000;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+    }
+
+    /* Notes Box */
+    .notes-box {
+      background: rgba(255, 59, 59, 0.05);
+      border: 3px solid var(--primary-dark);
+      padding: 20px;
+      position: relative;
+    }
+
+    .notes-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+    }
+
+    .notes-box label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin-bottom: 12px;
     }
 
     /* Footer */
     .card-footer {
-      border-top: 2px solid var(--primary-dark);
-      padding: 20px 40px;
+      border-top: 3px solid var(--primary-dark);
+      padding: 20px 50px;
       text-align: center;
-      font-size: 9px;
+      font-size: 10px;
       color: var(--text-dark);
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-transform: uppercase;
       background: rgba(255, 59, 59, 0.03);
     }
 
-    /* Circuit Pattern Background */
-    .id-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 300px;
-      height: 300px;
-      background: 
-        linear-gradient(45deg, transparent 48%, var(--primary-dark) 48%, var(--primary-dark) 52%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, var(--primary-dark) 48%, var(--primary-dark) 52%, transparent 52%);
-      background-size: 20px 20px;
-      opacity: 0.05;
-      pointer-events: none;
+    @media (max-width: 1400px) {
+      .card-content {
+        grid-template-columns: 300px 1fr 400px;
+      }
     }
 
     @media (max-width: 1200px) {
@@ -389,24 +427,25 @@
         grid-template-columns: 1fr;
       }
 
-      .right-section {
-        order: -1;
-      }
-
-      .profile-image-container {
-        height: 300px;
-      }
-
       .back-btn {
         position: static;
         margin-bottom: 20px;
         display: inline-block;
       }
+
+      .large-image-container {
+        min-height: 400px;
+      }
     }
 
     @media (max-width: 768px) {
-      .info-row {
-        grid-template-columns: 1fr;
+      .card-header {
+        padding: 20px;
+      }
+
+      .card-header h1 {
+        font-size: 24px;
+        letter-spacing: 4px;
       }
 
       .card-content {
@@ -414,13 +453,8 @@
         gap: 20px;
       }
 
-      .card-header {
-        padding: 20px;
-      }
-
-      .card-header h1 {
-        font-size: 28px;
-        letter-spacing: 6px;
+      .profile-image-container {
+        height: 250px;
       }
     }
   </style>
@@ -439,106 +473,94 @@
     <div class="id-card hidden" id="idCard">
       <!-- Header -->
       <div class="card-header">
-        <div class="subtitle">Private Organization for Scientific Research</div>
-        <h1>IDENTIFICATION</h1>
-        <div class="tagline">Access Information</div>
-        <div class="operative-type">INTERNATIONAL FIELD OPERATIVE</div>
+        <div class="logo">TC</div>
+        <div class="header-text">
+          <h1>TC FILES</h1>
+          <div class="subtitle">Personnel Database • Clearance Required</div>
+        </div>
       </div>
 
       <!-- Main Content -->
       <div class="card-content">
-        <!-- Left Section - Info Fields -->
+        <!-- Left Section - Stats & Small Image -->
         <div class="left-section">
-          <!-- Name and Clearance -->
-          <div class="info-row">
-            <div class="info-box">
-              <label>Name:</label>
-              <div class="value large" id="displayName">UNKNOWN</div>
+          <div class="stats-label">STATS</div>
+          
+          <div class="stats-box">
+            <div class="stat-item">
+              <div>
+                <div class="stat-label">Clearance:</div>
+                <div class="stat-value" id="statClearance">BETA</div>
+              </div>
             </div>
-            <div class="info-box">
-              <label>Clearance:</label>
-              <div class="value">
-                <span class="clearance-badge" id="clearanceBadge">BETA</span>
+            <div class="stat-item">
+              <div>
+                <div class="stat-label">Points:</div>
+                <div class="stat-value" id="statPoints">0</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div>
+                <div class="stat-label">Status:</div>
+                <div class="stat-value" id="statStatus">Active</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div>
+                <div class="stat-label">Restrictions:</div>
+                <div class="stat-value" id="restrictions">Standard</div>
               </div>
             </div>
           </div>
 
-          <!-- Hero Name and Rank -->
-          <div class="info-row">
-            <div class="info-box">
-              <label>Hero Name:</label>
-              <div class="value" id="heroName">Not Assigned</div>
-            </div>
-            <div class="info-box">
-              <label>Designation / Rank:</label>
-              <div class="value">
-                <span class="rank-badge" id="rankBadge">UNKNOWN</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Affiliation and Role -->
-          <div class="info-row">
-            <div class="info-box">
-              <label>Affiliation:</label>
-              <div class="value">TC Inc.</div>
-            </div>
-            <div class="info-box">
-              <label>File/Folder:</label>
-              <div class="value" id="roleInfo">Member</div>
-            </div>
-          </div>
-
-          <!-- Docket Number and Tag Code -->
-          <div class="info-row">
-            <div class="info-box">
-              <label>Docket Number:</label>
-              <div class="value" id="docketNumber">TC-XXXX</div>
-            </div>
-            <div class="info-box">
-              <label>Tag Code:</label>
-              <div class="value" id="tagCode">##-####</div>
-            </div>
-          </div>
-
-          <!-- Stats Section -->
-          <div class="stats-section">
-            <h3>Operative Statistics</h3>
-            <div class="stat-item">
-              <span class="stat-label">Promotion Points</span>
-              <span class="stat-value" id="statPoints">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Current Status</span>
-              <span class="stat-value" id="statStatus">Active</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Restrictions</span>
-              <span class="stat-value" id="restrictions">NONE</span>
-            </div>
-          </div>
-
-          <!-- Bio -->
-          <div class="info-row single">
-            <div class="info-box bio">
-              <label>Background / Bio:</label>
-              <div class="value" id="bioText">No biographical information available.</div>
-            </div>
+          <div class="profile-image-container no-image" id="secondaryImageContainer">
+            <span>PICTURE OF YOU</span>
           </div>
         </div>
 
-        <!-- Right Section - Profile Image -->
-        <div class="right-section">
-          <div class="profile-image-container no-image" id="profileImageContainer">
-            <span>NO IMAGE ON FILE</span>
+        <!-- Middle Section - Info Fields -->
+        <div class="middle-section">
+          <div class="info-box">
+            <label>Name:</label>
+            <div class="value large" id="displayName">YOUR NAME</div>
           </div>
-          <div class="tech-lines"></div>
+
+          <div class="info-box">
+            <label>Hero Name:</label>
+            <div class="value" id="heroName">HERO NAME</div>
+          </div>
+
+          <div class="info-box">
+            <label>Affiliation:</label>
+            <div class="value">TC Inc.</div>
+          </div>
+
+          <div class="info-box">
+            <label>Rank / Designation:</label>
+            <div class="value">
+              <span class="rank-badge" id="rankBadge">UNKNOWN</span>
+            </div>
+          </div>
+
+          <div class="notes-box">
+            <label>Notes | Special Attributes:</label>
+            <ul class="abilities-list" id="notesList">
+              <li>No notes on file</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Right Section - Large Image -->
+        <div class="right-section">
+          <div class="large-image-container no-image" id="profileImageContainer">
+            <span>PICTURE OF YOU</span>
+          </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="card-footer">
-        CLASSIFIED • TC INC. PERSONNEL DATABASE • PROTOCOL DT-01 • LOSS OF ID CARD MUST BE REPORTED IMMEDIATELY TO THE PROPER AUTHORITIES
+        CLASSIFIED • TC INC. PERSONNEL DATABASE • PROTOCOL DT-01 • AUTHORIZED ACCESS ONLY
       </div>
     </div>
   </div>
@@ -575,14 +597,12 @@
     const loadingState = document.getElementById('loadingState');
     const idCard = document.getElementById('idCard');
     const profileImageContainer = document.getElementById('profileImageContainer');
+    const secondaryImageContainer = document.getElementById('secondaryImageContainer');
     const displayName = document.getElementById('displayName');
     const heroName = document.getElementById('heroName');
     const rankBadge = document.getElementById('rankBadge');
-    const clearanceBadge = document.getElementById('clearanceBadge');
-    const roleInfo = document.getElementById('roleInfo');
-    const bioText = document.getElementById('bioText');
-    const docketNumber = document.getElementById('docketNumber');
-    const tagCode = document.getElementById('tagCode');
+    const notesList = document.getElementById('notesList');
+    const statClearance = document.getElementById('statClearance');
     const statPoints = document.getElementById('statPoints');
     const statStatus = document.getElementById('statStatus');
     const restrictions = document.getElementById('restrictions');
@@ -610,21 +630,6 @@
         if (r === 'shard') return 'BETA-1';
       }
       return 'BETA';
-    }
-
-    // Generate Docket Number
-    function generateDocketNumber(username) {
-      const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const num = String(hash).slice(-4).padStart(4, '0');
-      return `TC-${num}`;
-    }
-
-    // Generate Tag Code
-    function generateTagCode(username) {
-      const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      const num1 = String(hash).slice(0, 2).padStart(2, '0');
-      const num2 = String(hash).slice(-4).padStart(4, '0');
-      return `${num1}-${num2}`;
     }
 
     // Load User Data
@@ -658,19 +663,10 @@
 
         // Role
         const userRole = userData.role || 'member';
-        roleInfo.textContent = userRole === 'admin' ? 'Administrator' : 'Operative';
 
         // Clearance
         const clearance = getClearanceLevel(userRole, userRank);
-        clearanceBadge.textContent = clearance;
-
-        // Bio
-        const userBio = userData.bio || 'No biographical information available.';
-        bioText.textContent = userBio;
-
-        // Docket Number and Tag Code
-        docketNumber.textContent = generateDocketNumber(userData.username);
-        tagCode.textContent = generateTagCode(userData.username);
+        statClearance.textContent = clearance;
 
         // Stats
         statPoints.textContent = userData.promotionPoints || 0;
@@ -678,18 +674,45 @@
         
         // Restrictions
         if (userRole === 'admin') {
-          restrictions.textContent = 'NONE - FULL ACCESS';
+          restrictions.textContent = 'NONE';
         } else if (getRankClass(userRank) === 'leader') {
-          restrictions.textContent = 'LIMITED - LEADERSHIP';
+          restrictions.textContent = 'LIMITED';
         } else {
           restrictions.textContent = 'STANDARD';
         }
 
-        // Profile Image
+        // Profile Images
         if (userData.profileImage) {
           profileImageContainer.classList.remove('no-image');
           profileImageContainer.innerHTML = `<img src="${userData.profileImage}" alt="${userDisplayName}">`;
+          
+          // Also use for secondary image
+          secondaryImageContainer.classList.remove('no-image');
+          secondaryImageContainer.innerHTML = `<img src="${userData.profileImage}" alt="${userDisplayName}">`;
         }
+
+        // Notes - Create automatic notes based on data
+        const notes = [];
+        if (userRole === 'admin') {
+          notes.push('Full administrative access');
+          notes.push('Unrestricted clearance');
+        }
+        if (userRank) {
+          const r = userRank.toLowerCase();
+          if (r === 'proxy' || r === 'vicar' || r === 'guide') {
+            notes.push('Leadership designation');
+            notes.push('Team management authority');
+          }
+        }
+        if (userData.promotionPoints >= 1500) {
+          notes.push('Maximum progression achieved');
+        }
+        if (notes.length === 0) {
+          notes.push('Standard operative');
+          notes.push('No special designations');
+        }
+
+        notesList.innerHTML = notes.map(note => `<li>${note}</li>`).join('');
 
         // Show card
         loadingState.classList.add('hidden');
