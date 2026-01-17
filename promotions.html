@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TC Inc.</title>
+  <title>Dark Trackers • Promotions</title>
 
   <style>
     :root {
@@ -30,7 +30,7 @@
     }
 
     body {
-      font-family: 'Smooch Sans', monospace;
+      font-family: 'Courier New', Courier, monospace;
       color: var(--text);
       background:
         radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
@@ -494,7 +494,13 @@
       window.location.href = 'index.html';
     }
 
-    isAdmin = role === 'admin';
+    // Normalize role
+    function normalizeRole(r) {
+      const normalized = (r || "").toLowerCase().trim();
+      return normalized === "admin" ? "admin" : normalized;
+    }
+
+    const isAdmin = normalizeRole(role) === 'admin';
 
     // Get Current Rank
     function getCurrentRank(points) {
@@ -639,6 +645,12 @@
 
     // Award Points (Admin only)
     awardPointsBtn.addEventListener('click', async () => {
+      // Double-check admin status
+      if (!isAdmin) {
+        alert('⛔ Keine Berechtigung! Nur Admins können Punkte vergeben.');
+        return;
+      }
+
       const memberId = selectMember.value;
       const points = parseInt(pointsAmount.value);
       const reason = pointsReason.value.trim();
