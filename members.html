@@ -306,6 +306,12 @@
     function createMemberCard(member) {
       const card = document.createElement('div');
       card.className = 'member-card';
+      card.style.cursor = 'pointer';
+      
+      // Make card clickable - navigate to ID card
+      card.addEventListener('click', () => {
+        window.location.href = `id-card.html?user=${encodeURIComponent(member.username)}`;
+      });
 
       // Profile Image
       const imageDiv = document.createElement('div');
