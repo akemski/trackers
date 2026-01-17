@@ -482,7 +482,7 @@
 
     // Check Login
     const username = localStorage.getItem('clubUser');
-    const role = localStorage.getItem('clubRole');
+    let role = localStorage.getItem('clubRole'); // Initial role from localStorage
     
     if (!username) {
       window.location.href = 'index.html';
@@ -491,11 +491,13 @@
     // Normalize role
     function normalizeRole(r) {
       const normalized = (r || "").toLowerCase().trim();
-      return normalized === "admin" ? "admin" : normalized;
+      if (normalized === "admin") return "admin";
+      if (normalized === "leader") return "leader";
+      return normalized;
     }
 
-    const isAdmin = normalizeRole(role) === 'admin';
-    const isLeader = normalizeRole(role) === 'leader';
+    let isAdmin = false;
+    let isLeader = false;
 
     // Get Current Rank
     function getCurrentRank(points) {
@@ -619,6 +621,19 @@
         const doc = snap.docs[0];
         currentUserDoc = doc.id;
         currentUser = doc.data();
+
+        // Get role/rank from database - check both 'role' and 'rank' fields
+        const userRole = currentUser.role || currentUser.rank || role || '';
+        const normalizedRole = normalizeRole(userRole);
+        
+        // Update isAdmin and isLeader based on actual data
+        isAdmin = normalizedRole === 'admin';
+        isLeader = normalizedRole === 'leader';
+
+        console.log('User role from DB:', userRole);
+        console.log('Normalized role:', normalizedRole);
+        console.log('isLeader:', isLeader);
+        console.log('isAdmin:', isAdmin);
 
         const points = currentUser.promotionPoints || 0;
 
