@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TC Inc. • Personnel File</title>
+
+  <style>
+    :root {
+      --bg0: #050505;
+      --bg1: #0b0b10;
+      --panel: #101018;
+      --cyan: #00d4ff;
+      --cyan-dark: #008fa8;
+      --line: #00d4ff;
+      --text: #00d4ff;
+      --text-dark: #008fa8;
+      --muted: #b8b8d2;
+      --red: #c53f3f;
+      --red2: #ff3b3b;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--text);
+      background: #000;
+      min-height: 100vh;
+      padding: 40px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Back Button */
+    .back-btn {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      background: rgba(0, 212, 255, 0.1);
+      border: 2px solid var(--cyan-dark);
+      padding: 10px 20px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+      border-color: var(--cyan);
+    }
+
+    /* Main ID Card Container */
+    .id-card {
+      background: #000;
+      border: 3px solid var(--cyan);
+      box-shadow: 
+        0 0 20px rgba(0, 212, 255, 0.3),
+        inset 0 0 30px rgba(0, 212, 255, 0.05);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Corner decorations */
+    .id-card::before,
+    .id-card::after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--cyan);
+    }
+
+    .id-card::before {
+      top: 10px;
+      left: 10px;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .id-card::after {
+      bottom: 10px;
+      right: 10px;
+      border-left: none;
+      border-top: none;
+    }
+
+    /* Header */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--cyan-dark);
+    }
+
+    .card-header .logo {
+      width: 50px;
+      height: 50px;
+      background: var(--cyan);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #000;
+      font-size: 24px;
+    }
+
+    .card-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+
+    /* Main Layout */
+    .card-content {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+    }
+
+    /* Left Section - Image & Stats */
+    .left-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .profile-image-container {
+      width: 100%;
+      height: 280px;
+      border: 3px solid var(--cyan);
+      background: rgba(0, 212, 255, 0.05);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .profile-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-image-container.no-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dark);
+      font-size: 14px;
+    }
+
+    .stats-box {
+      background: rgba(0, 212, 255, 0.05);
+      border: 2px solid var(--cyan-dark);
+      padding: 15px;
+    }
+
+    .stats-box h3 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: var(--cyan);
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+      font-size: 12px;
+    }
+
+    .stat-item:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-value {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* Right Section - Info */
+    .right-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-header {
+      background: rgba(0, 212, 255, 0.1);
+      border: 2px solid var(--cyan);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .info-header .name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 5px;
+    }
+
+    .info-header .hero-name {
+      font-size: 18px;
+      color: var(--text-dark);
+      letter-spacing: 1px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .info-box {
+      background: rgba(0, 212, 255, 0.05);
+      border: 2px solid var(--cyan-dark);
+      padding: 15px;
+    }
+
+    .info-box.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .info-box h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .info-box .value {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      background: var(--cyan);
+      color: #000;
+      padding: 8px 16px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 5px;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    }
+
+    .rank-badge.leader {
+      background: #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    }
+
+    .rank-badge.admin {
+      background: var(--red2);
+      box-shadow: 0 0 15px rgba(255, 59, 59, 0.5);
+    }
+
+    .notes-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .notes-list li {
+      padding: 5px 0;
+      padding-left: 15px;
+      position: relative;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .notes-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+    }
+
+    /* Footer */
+    .card-footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid var(--cyan-dark);
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-dark);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .card-content {
+        grid-template-columns: 1fr;
+      }
+
+      .back-btn {
+        position: static;
+        margin-bottom: 20px;
+        display: inline-block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <a href="members.html" class="back-btn">← Zurück zur Liste</a>
+
+    <!-- Loading State -->
+    <div class="loading" id="loadingState">
+      Lade Personnel File...
+    </div>
+
+    <!-- ID Card -->
+    <div class="id-card hidden" id="idCard">
+      <!-- Header -->
+      <div class="card-header">
+        <div class="logo">TC</div>
+        <h1>Personnel File</h1>
+      </div>
+
+      <!-- Main Content -->
+      <div class="card-content">
+        <!-- Left Section -->
+        <div class="left-section">
+          <!-- Profile Image -->
+          <div class="profile-image-container no-image" id="profileImageContainer">
+            <span>NO IMAGE ON FILE</span>
+          </div>
+
+          <!-- Secondary Image -->
+          <div class="profile-image-container no-image" id="secondaryImageContainer">
+            <span>SECONDARY IMAGE</span>
+          </div>
+
+          <!-- Stats Box -->
+          <div class="stats-box">
+            <h3>Stats</h3>
+            <div class="stat-item">
+              <span class="stat-label">Clearance</span>
+              <span class="stat-value" id="statClearance">-</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Points</span>
+              <span class="stat-value" id="statPoints">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Status</span>
+              <span class="stat-value" id="statStatus">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+          <!-- Name Header -->
+          <div class="info-header">
+            <div class="name" id="displayName">UNKNOWN</div>
+            <div class="hero-name" id="heroName">Hero Name: Unknown</div>
+          </div>
+
+          <!-- Info Grid -->
+          <div class="info-grid">
+            <div class="info-box">
+              <h3>Name</h3>
+              <div class="value" id="infoName">Unknown</div>
+            </div>
+
+            <div class="info-box">
+              <h3>Affiliation</h3>
+              <div class="value">TC Inc.</div>
+            </div>
+
+            <div class="info-box">
+              <h3>Rank / Designation</h3>
+              <div class="value">
+                <span class="rank-badge" id="rankBadge">UNKNOWN</span>
+              </div>
+            </div>
+
+            <div class="info-box">
+              <h3>Role</h3>
+              <div class="value" id="roleInfo">Member</div>
+            </div>
+
+            <div class="info-box full-width">
+              <h3>Notes | Special Attributes</h3>
+              <ul class="notes-list" id="notesList">
+                <li>No additional notes on file</li>
+              </ul>
+            </div>
+
+            <div class="info-box full-width">
+              <h3>Bio / Background</h3>
+              <div class="value" id="bioText">No biographical information available.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        CLASSIFIED • TC INC. PERSONNEL DATABASE • PROTOCOL DT-01 • AUTHORIZED ACCESS ONLY
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
+      authDomain: "trackers-ce3fb.firebaseapp.com",
+      projectId: "trackers-ce3fb",
+      storageBucket: "trackers-ce3fb.firebasestorage.app",
+      messagingSenderId: "385800199430",
+      appId: "1:385800199430:web:93fe876ed4dfc6550a9287",
+      measurementId: "G-VXYWY0ELKF"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Get username from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetUsername = urlParams.get('user');
+
+    if (!targetUsername) {
+      alert('Kein User angegeben!');
+      window.location.href = 'members.html';
+    }
+
+    // DOM Elements
+    const loadingState = document.getElementById('loadingState');
+    const idCard = document.getElementById('idCard');
+    const profileImageContainer = document.getElementById('profileImageContainer');
+    const secondaryImageContainer = document.getElementById('secondaryImageContainer');
+    const displayName = document.getElementById('displayName');
+    const heroName = document.getElementById('heroName');
+    const infoName = document.getElementById('infoName');
+    const rankBadge = document.getElementById('rankBadge');
+    const roleInfo = document.getElementById('roleInfo');
+    const bioText = document.getElementById('bioText');
+    const notesList = document.getElementById('notesList');
+    const statClearance = document.getElementById('statClearance');
+    const statPoints = document.getElementById('statPoints');
+    const statStatus = document.getElementById('statStatus');
+
+    // Helper function to get rank class
+    function getRankClass(rank) {
+      if (!rank) return '';
+      const r = rank.toLowerCase();
+      if (r === 'guide' || r === 'vicar' || r === 'proxy') return 'leader';
+      if (r === 'admin') return 'admin';
+      return '';
+    }
+
+    // Helper function to determine clearance level
+    function getClearanceLevel(role, rank) {
+      if (role && role.toLowerCase() === 'admin') return 'ALPHA';
+      if (rank) {
+        const r = rank.toLowerCase();
+        if (r === 'proxy') return 'SIGMA';
+        if (r === 'vicar') return 'DELTA';
+        if (r === 'guide') return 'GAMMA';
+        if (r === 'executor') return 'BETA-4';
+        if (r === 'axis') return 'BETA-3';
+        if (r === 'initiate') return 'BETA-2';
+        if (r === 'shard') return 'BETA-1';
+      }
+      return 'BETA';
+    }
+
+    // Load User Data
+    async function loadUserData() {
+      try {
+        const snap = await db.collection('users')
+          .where('username', '==', targetUsername)
+          .limit(1)
+          .get();
+
+        if (snap.empty) {
+          alert('User nicht gefunden!');
+          window.location.href = 'members.html';
+          return;
+        }
+
+        const userData = snap.docs[0].data();
+
+        // Display Name
+        const userDisplayName = userData.displayName || userData.username || 'Unknown';
+        displayName.textContent = userDisplayName.toUpperCase();
+        infoName.textContent = userDisplayName;
+
+        // Hero/Ingame Name
+        const userHeroName = userData.ingameName || 'Not Assigned';
+        heroName.textContent = `Hero Name: ${userHeroName}`;
+
+        // Rank
+        const userRank = userData.rank || 'Unassigned';
+        rankBadge.textContent = userRank.toUpperCase();
+        rankBadge.className = 'rank-badge ' + getRankClass(userRank);
+
+        // Role
+        const userRole = userData.role || 'member';
+        roleInfo.textContent = userRole === 'admin' ? 'Administrator' : 'Operative';
+
+        // Bio
+        const userBio = userData.bio || 'No biographical information available.';
+        bioText.textContent = userBio;
+
+        // Stats
+        statClearance.textContent = getClearanceLevel(userRole, userRank);
+        statPoints.textContent = userData.promotionPoints || 0;
+        statStatus.textContent = userData.status || 'Active';
+
+        // Profile Image
+        if (userData.profileImage) {
+          profileImageContainer.classList.remove('no-image');
+          profileImageContainer.innerHTML = `<img src="${userData.profileImage}" alt="${userDisplayName}">`;
+        }
+
+        // Notes - Create some automatic notes based on data
+        const notes = [];
+        if (userRole === 'admin') {
+          notes.push('Full administrative access');
+          notes.push('Unrestricted clearance');
+        }
+        if (userRank) {
+          const r = userRank.toLowerCase();
+          if (r === 'proxy' || r === 'vicar' || r === 'guide') {
+            notes.push('Leadership designation');
+            notes.push('Team management authority');
+          }
+        }
+        if (userData.promotionPoints >= 1500) {
+          notes.push('Maximum progression achieved');
+        }
+        if (notes.length === 0) {
+          notes.push('Standard operative');
+          notes.push('No special designations');
+        }
+
+        notesList.innerHTML = notes.map(note => `<li>${note}</li>`).join('');
+
+        // Show card
+        loadingState.classList.add('hidden');
+        idCard.classList.remove('hidden');
+
+      } catch (error) {
+        console.error('Fehler beim Laden:', error);
+        alert('Fehler beim Laden der Daten!');
+        window.location.href = 'members.html';
+      }
+    }
+
+    // Load data on page load
+    loadUserData();
+  </script>
+</body>
+</html>
