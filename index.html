@@ -21,7 +21,7 @@
 
       --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
       --shadow: 0 14px 40px rgba(0,0,0,.45);
-      --radius: 0px; /* Ecken schärfer */
+      --radius: 0px;
       --border-color: rgba(37,37,55,.7);
       --border-hover: rgba(209,42,61,.45);
     }
@@ -48,7 +48,6 @@
       color: #ccc;
     }
 
-    /* Neues, weniger intensives Retro-Glitch für die Überschrift */
     h1{
       font-size: 36px;
       font-family: 'Courier New', Courier, monospace;
@@ -66,7 +65,7 @@
     .card{
       background: linear-gradient(180deg, rgba(16,16,24,.95), rgba(12,12,16,.95));
       border: 1px solid rgba(43,43,68,.9);
-      border-radius: var(--radius); /* Ecken schärfer */
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 22px;
       position: relative;
@@ -155,6 +154,7 @@
       box-shadow: var(--glow);
     }
 
+    button:disabled{ opacity:.6; cursor:not-allowed; }
     button:active{ transform: translateY(1px); }
 
     .btn2{
@@ -242,7 +242,7 @@
         <input id="password" type="password" required placeholder="••••••••" autocomplete="current-password" />
 
         <div class="row">
-          <button class="btn" type="submit">login</button>
+          <button class="btn" id="loginBtn" type="submit">login</button>
         </div>
 
         <div id="loginError" class="err">login failed</div>
@@ -283,21 +283,18 @@
           <button class="btn" onclick="location.href='comms.html'">Öffnen</button>
         </div>
 
-        <!-- Instructor-only -->
         <div class="box" id="instructBox">
           <h3>Instruction</h3>
           <p class="muted">Trainings, Aufgaben, Bewertungen.</p>
           <button class="btn" onclick="location.href='instruct.html'">Öffnen</button>
         </div>
 
-        <!-- Leader/Admin-only -->
         <div class="box" id="leaderBox">
           <h3>Leadership</h3>
           <p class="muted">Planung, Termine, Organisation.</p>
           <button class="btn" onclick="location.href='leader.html'">Öffnen</button>
         </div>
 
-        <!-- Admin-only -->
         <div class="box" id="adminBox">
           <h3>Admin Panel</h3>
           <p class="muted">User verwalten, Rollen setzen.</p>
@@ -317,7 +314,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
       authDomain: "trackers-ce3fb.firebaseapp.com",
@@ -332,21 +328,16 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // normalizeRole-Funktion hinzufügen
     function normalizeRole(role) {
       const r = (role || "").toLowerCase().trim();
       return r === "admin" ? "admin" : r === "leader" ? "leader" : r === "instruct" ? "instruct" : "member";
     }
 
-    // showDash Funktion hinzufügen
-    function showDash(username, role) {
-      loginPage.classList.add("hidden");
-      dashPage.classList.remove("hidden");
-      userPill.textContent = "👤 " + (username || "—");
-      rolePill.textContent = "🔑 " + role;
-
-      // Rollenbezogene UI-Anpassungen
-      applyRoleUI(role);
+    // Wandelt den Username in eine interne "Fake-Email" für Firebase Auth um.
+    // Muss IDENTISCH mit der Funktion im Migrations-Tool sein!
+    function toAuthEmail(username) {
+      const clean = (username || "").toLowerCase().trim().replace(/[^a-z0-9._-]/g, "");
+      return clean + "@tcinc-auth.local";
     }
 
     function applyRoleUI(role) {
@@ -360,55 +351,50 @@
       if (r === "admin") adminBox.classList.remove("hidden");
     }
 
-    // Debugging & Logs
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       loginError.style.display = "none";
+      loginBtn.disabled = true;
 
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
 
-      console.log("Login gestartet...");
-
       try {
-        console.log("Suche nach User:", username);
-        const snap = await db
-          .collection("users")
-          .where("username", "==", username)
-          .limit(1)
-          .get();
+        const email = toAuthEmail(username);
 
-        console.log("Firestore Antwort:", snap);
+        // Firebase prüft Passwort sicher server-seitig - nie Klartext im Frontend
+        const cred = await auth.signInWithEmailAndPassword(email, password);
+        const uid = cred.user.uid;
 
-        if (snap.empty) throw new Error("User nicht gefunden");
+        const userDoc = await db.collection("users").doc(uid).get();
+        if (!userDoc.exists) throw new Error("Profil nicht gefunden. Bitte Admin kontaktieren.");
 
-        const userDoc = snap.docs[0];
         const data = userDoc.data();
-
-        console.log("User gefunden:", data);
-
-        if ((data.password || "") !== password) throw new Error("Falsches Passwort");
-
         const role = normalizeRole(data.role);
 
-        console.log("Login erfolgreich, Rolle:", role);
-
-        localStorage.setItem("clubUser", username);
+        localStorage.setItem("clubUser", data.username || username);
         localStorage.setItem("clubRole", role);
 
-        await auth.signInAnonymously();
         window.location.href = "profile.html";
 
       } catch (err) {
-        console.error("Login Error:", err);
+        console.error("Login Error:", err.code, err.message);
+        let msg = "Falscher Username oder Passwort.";
+        if (err.message && err.message.includes("Profil nicht gefunden")) msg = err.message;
         loginError.style.display = "block";
-        loginError.textContent = `Fehler: ${err.message}`;
+        loginError.textContent = `Fehler: ${msg}`;
+      } finally {
+        loginBtn.disabled = false;
       }
+    });
+
+    logoutBtn && logoutBtn.addEventListener("click", async () => {
+      await auth.signOut();
+      localStorage.removeItem("clubUser");
+      localStorage.removeItem("clubRole");
+      dashPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
     });
   </script>
 </body>
 </html>
-
-
-
-
