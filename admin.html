@@ -47,6 +47,23 @@
     select.inlineSelect{ padding:6px; font-size:13px; }
     .saveRowBtn{ margin:0; padding:6px 12px; font-size:11px; }
     .denied{ text-align:center; padding:60px 20px; color:var(--muted); }
+
+    .overlay{
+      position:fixed; inset:0; background:rgba(0,0,0,.75);
+      display:flex; align-items:center; justify-content:center; padding:20px; z-index:100;
+    }
+    .overlay-box{
+      background:var(--panel); border:3px solid var(--red); padding:26px; max-width:520px; width:100%;
+    }
+    .overlay-box h2{ font-size:18px; margin-bottom:16px; color:var(--red2); }
+    .stepText{ font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:14px; }
+    .stepText a{ color:var(--red2); }
+    .stepText code{ background:var(--bg1); padding:2px 6px; border:1px solid var(--line2); }
+    .secondaryBtn{
+      margin-top:16px; background:transparent; border:2px solid var(--line2); color:var(--muted);
+      box-shadow:none; width:100%;
+    }
+    .secondaryBtn:hover{ border-color:var(--muted); }
   </style>
 </head>
 <body>
@@ -101,6 +118,33 @@
           <tbody id="usersTableBody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <!-- Passwort-Reset Overlay -->
+  <div id="resetOverlay" class="overlay hidden">
+    <div class="overlay-box">
+      <h2>Passwort zurücksetzen: <span id="resetUsername"></span></h2>
+
+      <div id="resetStep1">
+        <p class="stepText">
+          Schritt 1: Öffne die
+          <a href="https://console.firebase.google.com/project/trackers-ce3fb/authentication/users" target="_blank">Firebase Console → Authentication</a>,
+          suche nach der E-Mail <code id="resetEmail"></code> und lösche diesen Account (⋮ → Löschen).
+        </p>
+        <label>Erledigt?</label>
+        <button type="button" id="confirmDeletedBtn">Ja, Account wurde gelöscht → weiter</button>
+      </div>
+
+      <div id="resetStep2" class="hidden">
+        <p class="stepText">Schritt 2: Neues Passwort vergeben. Alle bisherigen Profildaten (Bio, Rang, Punkte, Bild) bleiben erhalten.</p>
+        <label for="resetPasswordInput">Neues Passwort (min. 6 Zeichen)</label>
+        <input id="resetPasswordInput" type="text" minlength="6" placeholder="mind. 6 Zeichen" />
+        <button type="button" id="finishResetBtn">Account neu anlegen</button>
+        <div id="resetMsg" class="msg"></div>
+      </div>
+
+      <button type="button" id="cancelResetBtn" class="secondaryBtn">Abbrechen</button>
     </div>
   </div>
 
@@ -226,8 +270,16 @@
           <td>${data.username || '—'}</td>
           <td><select class="inlineSelect roleSelect">${roleOptions}</select></td>
           <td><input class="rankInput" value="${data.rank || ''}" style="padding:6px; font-size:13px;" /></td>
-          <td><button class="saveRowBtn" type="button">Speichern</button></td>
+          <td style="display:flex; gap:6px;">
+            <button class="saveRowBtn" type="button">Speichern</button>
+            <button class="saveRowBtn resetPwBtn" type="button" style="background:transparent; border:2px solid var(--line2); color:var(--muted);">🔑 Passwort</button>
+          </td>
         `;
+
+        tr.querySelector('.resetPwBtn').addEventListener('click', () => {
+          openResetOverlay(uid, data);
+        });
+
 
         tr.querySelector('.saveRowBtn').addEventListener('click', async () => {
           const newRole = tr.querySelector('.roleSelect').value;
@@ -243,6 +295,99 @@
         usersTableBody.appendChild(tr);
       });
     }
+    // ---- Passwort-Reset Overlay ----
+    const resetOverlay = document.getElementById('resetOverlay');
+    const resetUsername = document.getElementById('resetUsername');
+    const resetEmail = document.getElementById('resetEmail');
+    const resetStep1 = document.getElementById('resetStep1');
+    const resetStep2 = document.getElementById('resetStep2');
+    const confirmDeletedBtn = document.getElementById('confirmDeletedBtn');
+    const resetPasswordInput = document.getElementById('resetPasswordInput');
+    const finishResetBtn = document.getElementById('finishResetBtn');
+    const cancelResetBtn = document.getElementById('cancelResetBtn');
+    const resetMsg = document.getElementById('resetMsg');
+
+    let resetContext = null; // { oldUid, savedData }
+
+    function openResetOverlay(uid, data) {
+      resetContext = { oldUid: uid, savedData: { ...data } };
+      resetUsername.textContent = data.username || '—';
+      resetEmail.textContent = toAuthEmail(data.username);
+      resetStep1.classList.remove('hidden');
+      resetStep2.classList.add('hidden');
+      resetPasswordInput.value = '';
+      resetMsg.textContent = '';
+      resetMsg.className = 'msg';
+      resetOverlay.classList.remove('hidden');
+    }
+
+    function closeResetOverlay() {
+      resetOverlay.classList.add('hidden');
+      resetContext = null;
+    }
+
+    cancelResetBtn.addEventListener('click', closeResetOverlay);
+
+    confirmDeletedBtn.addEventListener('click', () => {
+      resetStep1.classList.add('hidden');
+      resetStep2.classList.remove('hidden');
+    });
+
+    finishResetBtn.addEventListener('click', async () => {
+      if (!resetContext) return;
+      const newPassword = resetPasswordInput.value;
+
+      if (!newPassword || newPassword.length < 6) {
+        resetMsg.textContent = '❌ Passwort muss mindestens 6 Zeichen haben.';
+        resetMsg.className = 'msg err';
+        return;
+      }
+
+      finishResetBtn.disabled = true;
+      resetMsg.textContent = 'Lege neuen Account an...';
+      resetMsg.className = 'msg';
+
+      try {
+        const { oldUid, savedData } = resetContext;
+        const email = toAuthEmail(savedData.username);
+
+        const secondaryApp = firebase.apps.find(a => a.name === 'Secondary') ||
+                              firebase.initializeApp(firebaseConfig, 'Secondary');
+        const secondaryAuth = secondaryApp.auth();
+
+        // Neuen Auth-Account mit neuem Passwort anlegen
+        const cred = await secondaryAuth.createUserWithEmailAndPassword(email, newPassword);
+        const newUid = cred.user.uid;
+        await secondaryAuth.signOut();
+
+        // Alle geretteten Profildaten unter der neuen UID wiederherstellen
+        await db.collection('users').doc(newUid).set(savedData);
+
+        // Altes, jetzt verwaistes Dokument (alte UID) entfernen
+        if (oldUid !== newUid) {
+          await db.collection('users').doc(oldUid).delete().catch(() => {});
+        }
+
+        resetMsg.textContent = `✅ Fertig! ${savedData.username} kann sich jetzt mit dem neuen Passwort einloggen.`;
+        resetMsg.className = 'msg ok';
+
+        setTimeout(() => {
+          closeResetOverlay();
+          loadUsersTable();
+        }, 1800);
+
+      } catch (err) {
+        console.error('Reset Error:', err);
+        let msg = err.message;
+        if (err.code === 'auth/email-already-in-use') {
+          msg = 'Der alte Account existiert noch! Bitte zuerst wirklich in der Firebase Console löschen (Schritt 1).';
+        }
+        resetMsg.textContent = `❌ Fehler: ${msg}`;
+        resetMsg.className = 'msg err';
+      } finally {
+        finishResetBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
