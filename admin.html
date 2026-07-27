@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TC Inc. • Admin Panel</title>
+
+  <style>
+    :root{
+      --bg0:#050505; --bg1:#0b0b10; --panel:#101018; --line:#242436; --line2:#2b2b44;
+      --text:#ececf4; --muted:#b8b8d2; --red:#c53f3f; --red2:#ff3b3b;
+      --glow: 0 0 0 1px rgba(255,59,59,.3), 0 0 5px rgba(255,59,59,.15);
+    }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family:'Courier New', Courier, monospace;
+      color:var(--text);
+      background: radial-gradient(900px 500px at 20% 0%, rgba(176,22,42,.15), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh; padding:40px 20px;
+    }
+    .container{ max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:24px; }
+    .header{ background:var(--panel); border:3px solid var(--line); padding:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+    .header h1{ font-size:28px; text-transform:uppercase; letter-spacing:2px; }
+    .back-btn{ background:var(--panel); border:3px solid var(--line); padding:10px 20px; text-decoration:none; color:var(--text); font-weight:700; text-transform:uppercase; font-size:13px; }
+    .back-btn:hover{ border-color:var(--red); }
+    .card{ background:var(--panel); border:3px solid var(--line); padding:26px; }
+    .card h2{ font-size:18px; text-transform:uppercase; margin-bottom:18px; color:var(--red2); }
+    label{ display:block; font-size:12px; text-transform:uppercase; color:var(--muted); margin-top:14px; margin-bottom:6px; }
+    input, select{
+      width:100%; padding:10px 12px; background:var(--bg1); border:2px solid var(--line2);
+      color:var(--text); font-family:inherit; font-size:14px;
+    }
+    input:focus, select:focus{ outline:none; border-color:var(--red); }
+    button{
+      margin-top:18px; border:0; cursor:pointer; padding:12px 20px; font-weight:700;
+      text-transform:uppercase; letter-spacing:1px; background:var(--red); color:#fff; box-shadow:var(--glow);
+    }
+    button:disabled{ opacity:.5; cursor:not-allowed; }
+    .msg{ margin-top:14px; font-size:14px; white-space:pre-wrap; }
+    .msg.ok{ color:#8bff9b; }
+    .msg.err{ color:#ff7b86; }
+    .hidden{ display:none !important; }
+    table{ width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td{ text-align:left; padding:10px 8px; border-bottom:1px solid var(--line2); font-size:13px; }
+    th{ color:var(--muted); text-transform:uppercase; font-size:11px; }
+    select.inlineSelect{ padding:6px; font-size:13px; }
+    .saveRowBtn{ margin:0; padding:6px 12px; font-size:11px; }
+    .denied{ text-align:center; padding:60px 20px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Admin Panel</h1>
+      <a href="profile.html" class="back-btn">← Zurück zum Profil</a>
+    </div>
+
+    <div id="deniedBox" class="card denied hidden">
+      <p>⛔ Kein Zugriff. Dieser Bereich ist nur für Admins.</p>
+    </div>
+
+    <div id="adminContent" class="hidden">
+      <div class="card">
+        <h2>Neues Mitglied anlegen</h2>
+        <form id="createForm">
+          <label for="newUsername">Username (login)</label>
+          <input id="newUsername" required placeholder="z.B. nadira" />
+
+          <label for="newDisplayName">Anzeigename</label>
+          <input id="newDisplayName" required placeholder="z.B. Nadira" />
+
+          <label for="newIngameName">Ingame Name (optional)</label>
+          <input id="newIngameName" placeholder="Vorname Nachname" />
+
+          <label for="newPassword">Passwort (min. 6 Zeichen)</label>
+          <input id="newPassword" type="text" required minlength="6" placeholder="mind. 6 Zeichen" />
+
+          <label for="newRole">Rolle</label>
+          <select id="newRole">
+            <option value="member">member</option>
+            <option value="instruct">instruct</option>
+            <option value="leader">leader</option>
+            <option value="admin">admin</option>
+          </select>
+
+          <label for="newRank">Rang</label>
+          <input id="newRank" placeholder="z.B. SHARD, INITIATE, AXIS, EXECUTOR, GUIDE, VICAR, PROXY" />
+
+          <button type="submit" id="createBtn">Mitglied anlegen</button>
+          <div id="createMsg" class="msg"></div>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:24px;">
+        <h2>Bestehende Mitglieder</h2>
+        <table>
+          <thead>
+            <tr><th>Username</th><th>Rolle</th><th>Rang</th><th></th></tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyASTwGk7GYqOaDWTRB77Qw5aE_RnWzcHic",
+      authDomain: "trackers-ce3fb.firebaseapp.com",
+      projectId: "trackers-ce3fb",
+      storageBucket: "trackers-ce3fb.firebasestorage.app",
+      messagingSenderId: "385800199430",
+      appId: "1:385800199430:web:93fe876ed4dfc6550a9287",
+      measurementId: "G-VXYWY0ELKF"
+    };
+
+    // Haupt-App: das ist deine eigentliche eingeloggte Admin-Session
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Muss IDENTISCH mit index.html / migrate-once.html sein!
+    function toAuthEmail(username) {
+      const clean = (username || "").toLowerCase().trim().replace(/[^a-z0-9._-]/g, "");
+      return clean + "@tcinc-auth.local";
+    }
+
+    const deniedBox = document.getElementById('deniedBox');
+    const adminContent = document.getElementById('adminContent');
+    const createForm = document.getElementById('createForm');
+    const createBtn = document.getElementById('createBtn');
+    const createMsg = document.getElementById('createMsg');
+    const usersTableBody = document.getElementById('usersTableBody');
+
+    // Login + Admin-Check
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) { window.location.href = 'index.html'; return; }
+
+      const myDoc = await db.collection('users').doc(user.uid).get();
+      const myRole = (myDoc.exists ? myDoc.data().role : '') || '';
+
+      if (myRole.toLowerCase() !== 'admin') {
+        deniedBox.classList.remove('hidden');
+        return;
+      }
+
+      adminContent.classList.remove('hidden');
+      loadUsersTable();
+    });
+
+    // Neues Mitglied anlegen - über eine zweite, separate Firebase-App-Instanz,
+    // damit die eigene Admin-Session dabei NICHT ausgeloggt wird.
+    createForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      createBtn.disabled = true;
+      createMsg.textContent = '';
+      createMsg.className = 'msg';
+
+      const username = document.getElementById('newUsername').value.trim();
+      const displayName = document.getElementById('newDisplayName').value.trim();
+      const ingameName = document.getElementById('newIngameName').value.trim();
+      const password = document.getElementById('newPassword').value;
+      const role = document.getElementById('newRole').value;
+      const rank = document.getElementById('newRank').value.trim();
+
+      let secondaryApp;
+      try {
+        const email = toAuthEmail(username);
+
+        secondaryApp = firebase.apps.find(a => a.name === 'Secondary') ||
+                       firebase.initializeApp(firebaseConfig, 'Secondary');
+        const secondaryAuth = secondaryApp.auth();
+
+        const cred = await secondaryAuth.createUserWithEmailAndPassword(email, password);
+        const uid = cred.user.uid;
+        await secondaryAuth.signOut();
+
+        await db.collection('users').doc(uid).set({
+          username,
+          displayName,
+          ingameName,
+          role,
+          rank,
+          status: 'Online',
+          bio: 'Noch keine Bio vorhanden.',
+          profileImage: '',
+          promotionPoints: 0
+        });
+
+        createMsg.textContent = `✅ ${username} wurde erfolgreich angelegt.`;
+        createMsg.className = 'msg ok';
+        createForm.reset();
+        loadUsersTable();
+
+      } catch (err) {
+        console.error('Anlegen Error:', err);
+        let msg = err.message;
+        if (err.code === 'auth/email-already-in-use') msg = 'Dieser Username ist bereits vergeben.';
+        if (err.code === 'auth/weak-password') msg = 'Passwort muss mindestens 6 Zeichen haben.';
+        createMsg.textContent = `❌ Fehler: ${msg}`;
+        createMsg.className = 'msg err';
+      } finally {
+        createBtn.disabled = false;
+      }
+    });
+
+    // Bestehende Mitglieder anzeigen + Rolle/Rang direkt änderbar
+    async function loadUsersTable() {
+      usersTableBody.innerHTML = '';
+      const snap = await db.collection('users').get();
+
+      snap.forEach(docSnap => {
+        const data = docSnap.data();
+        const uid = docSnap.id;
+        const tr = document.createElement('tr');
+
+        const roleOptions = ['member', 'instruct', 'leader', 'admin']
+          .map(r => `<option value="${r}" ${data.role === r ? 'selected' : ''}>${r}</option>`).join('');
+
+        tr.innerHTML = `
+          <td>${data.username || '—'}</td>
+          <td><select class="inlineSelect roleSelect">${roleOptions}</select></td>
+          <td><input class="rankInput" value="${data.rank || ''}" style="padding:6px; font-size:13px;" /></td>
+          <td><button class="saveRowBtn" type="button">Speichern</button></td>
+        `;
+
+        tr.querySelector('.saveRowBtn').addEventListener('click', async () => {
+          const newRole = tr.querySelector('.roleSelect').value;
+          const newRank = tr.querySelector('.rankInput').value.trim();
+          try {
+            await db.collection('users').doc(uid).update({ role: newRole, rank: newRank });
+            alert(`${data.username}: Rolle/Rang aktualisiert.`);
+          } catch (err) {
+            alert('Fehler beim Speichern: ' + err.message);
+          }
+        });
+
+        usersTableBody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
