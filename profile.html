@@ -496,6 +496,7 @@
     };
 
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     // DOM Elements
@@ -525,6 +526,16 @@
     if (!username) {
       window.location.href = 'index.html';
     }
+
+    // Warten bis Firebase die Auth-Session wiederhergestellt hat,
+    // ERST DANN Firestore-Daten laden (sonst "Missing permissions")
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      loadUserData();
+    });
 
     // Load User Data
     async function loadUserData() {
@@ -743,8 +754,6 @@
       window.location.href = 'index.html';
     });
 
-    // Load data on page load
-    loadUserData();
   </script>
 </body>
 </html>
